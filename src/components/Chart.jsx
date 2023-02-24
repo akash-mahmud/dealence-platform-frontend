@@ -22,8 +22,8 @@ import {
   Typography,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
+import { round } from 'lodash'
 
-const _ = require('lodash');
 
 const useStyles = makeStyles((theme) => ({
   tooltip: {
@@ -70,19 +70,19 @@ function createData(principal, semesters = 2) {
   for (let i = 0; i < semesters; i++) {
     prevDate.setMonth(prevDate.getMonth() + 6);
     let amount = data[i].euro + db * (1 * 0.3);
-     Data = _.round(principal,2);
+     Data = round(principal,2);
 
     if (i >= semesters - 1) {
       data.push({
-        euro: _.round(amount, 2),
-        data: _.round(principal, 2),
-        futureEuro: _.round(amount, 2),
+        euro: round(amount, 2),
+        data: round(principal, 2),
+        futureEuro: round(amount, 2),
         date: formattedDate(prevDate),
       });
     } else {
       data.push({
-        euro: _.round(amount, 2),
-        data: _.round(principal, 2),
+        euro: round(amount, 2),
+        data: round(principal, 2),
         date: formattedDate(prevDate),
       });
     }
@@ -96,7 +96,7 @@ function createData(principal, semesters = 2) {
   //       data[data.length - 1].futureEuro * (1 * 0.3);
  
   //     data.push({
-  //       futureEuro: _.round(amount, 2),
+  //       futureEuro: round(amount, 2),
   //       date: formattedDate(prevDate),
   //     });
   //   }
@@ -111,9 +111,9 @@ function createData(principal, semesters = 2) {
       const amount =
         data[data.length - 1].futureEuro + db * (1 * 0.3);
   // console.log(amount);
-  // console.log(_.round(amount, 2));
+  // console.log(round(amount, 2));
       data.push({
-        futureEuro: _.round(amount, 2),
+        futureEuro: round(amount, 2),
         date: formattedDate(prevDate),
       });
     }

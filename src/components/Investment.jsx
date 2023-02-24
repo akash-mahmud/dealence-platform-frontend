@@ -14,18 +14,20 @@ import {
   Select,
   TextField,
   Typography,
-  a,
+
   Checkbox,
 } from '@material-ui/core';
 
 import ClearIcon from '@material-ui/icons/Clear';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import DialogActions from '@material-ui/core/DialogActions';
-import axios from 'axios';
+
 import { useAuth } from '../hooks/use-auth';
-import { NotificationManager } from 'react-notifications';
+import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { endpoint } from '../config/endpoints';
+import { axiosRequest } from '../http/axiosRequest';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -101,26 +103,23 @@ export default function Investment({
   const classes = useStyles();
   const submitHandle = async () => {
 
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_DATA}/investment`,
+    const res = await axiosRequest.post(
+     endpoint.investment.create,
       { plan, amount },
-      { withCredentials: true }
+
     );
 
     if (res.data === 'success') {
       setOpen(false);
-      NotificationManager.success(t('Your_plan'), t('Plan_actived'));
+      toast.success(t('Your_plan')+ t('Plan_actived'));
       investmentCallback();
     } else {
-      NotificationManager.error(t('Something'), t('Error'));
+      toast.error(t('Something')+ t('Error'));
     }
 
     const getData = async () => {
-      const investData = await axios.get(
-        `${process.env.REACT_APP_API_DATA}/investment`,
-        {
-          withCredentials: true,
-        }
+      const investData = await axiosRequest.get(
+        endpoint.investment.get,
       );
 
       setInvest(investData.data);
@@ -129,11 +128,8 @@ export default function Investment({
       // window.location.reload();
 
       const balance = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_DATA}/account/balance`,
-          {
-            withCredentials: true,
-          }
+        const res = await axiosRequest.get(
+         endpoint.account.getbalance
         );
 
         setBalance(res.data.balance);
@@ -146,36 +142,30 @@ export default function Investment({
 
   const submitChange = async () => {
     // setopenSelect(true);
-    const res = await axios.put(
-      `${process.env.REACT_APP_API_DATA}/investment`,
+    const res = await axiosRequest.put(
+      endpoint.investment.update,
       { plan, amount },
-      { withCredentials: true }
+
     );
 
     if (res.status === 200) {
       setOpenChange(false);
       investmentCallback();
-      // NotificationManager.success('Correctly Incremented', 'Success');
+      // toast.success('Correctly Incremented', 'Success');
     } else {
-      // NotificationManager.error('Something went wrong', 'Error');
+      // toast.error('Something went wrong', 'Error');
     }
 
     const getData = async () => {
-      const investData = await axios.get(
-        `${process.env.REACT_APP_API_DATA}/investment`,
-        {
-          withCredentials: true,
-        }
+      const investData = await axiosRequest.get(
+        endpoint.investment.get,
       );
 
       setInvest(investData.data);
 
       const balance = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_DATA}/account/balance`,
-          {
-            withCredentials: true,
-          }
+        const res = await axiosRequest.get(
+         endpoint.account.getbalance
         );
 
         setBalance(res.data.balance);
@@ -189,11 +179,8 @@ export default function Investment({
   const [planSelected, setplanSelected] = useState();
   useEffect(() => {
     const getData = async () => {
-      const investData = await axios.get(
-        `${process.env.REACT_APP_API_DATA}/investment`,
-        {
-          withCredentials: true,
-        }
+      const investData = await axiosRequest.get(
+        endpoint.investment.get,
       );
 
       setInvest(investData.data);
@@ -835,6 +822,7 @@ export default function Investment({
           </Button>
         </DialogActions>
       </Dialog>
+      
       <Title>{t('Portfolio_Balance')}</Title>
       <Typography component="p" variant="h4">
         &euro;{invest ? invest.principal : 0}

@@ -7,7 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Pagination from '@material-ui/lab/Pagination';
 import Title from './Title';
-import axios from 'axios';
+
 import { Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import './i18nextInit';
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 import reportWebVitals from './reportWebVitals';
 
@@ -10,7 +12,9 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <Suspense fallback="...">
+      
       <App />
+      <ToastContainer />
     </Suspense>
   </React.StrictMode>,
   document.getElementById('root')

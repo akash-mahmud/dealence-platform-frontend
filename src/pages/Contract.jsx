@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -10,6 +10,8 @@ import UploadFile from "../components/UploadFile";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import { useHistory } from "react-router-dom";
+import { axiosRequest } from "../http/axiosRequest";
+import { endpoint } from "../config/endpoints";
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -48,9 +50,7 @@ function Contract() {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-        withCredentials: true,
-      });
+      const res = await axiosRequest.get(endpoint.user.me);
 
       if (user.isActive) {
         history.push("/");
@@ -76,10 +76,10 @@ function Contract() {
 
   };
   const checkData = async () => {
-    await axios.put(
-      `${process.env.REACT_APP_API_DATA}/user/signContract`,
+    await axiosRequest.put(
+     endpoint.user.signContract,
       {},
-      { withCredentials: true }
+ 
     );
   };
 
@@ -92,14 +92,14 @@ function Contract() {
     const bodyFormData = new FormData();
     bodyFormData.append("image", fileData);
     try {
-      const res = await axios.put(
-        `${process.env.REACT_APP_API_DATA}/user/uploadDocument`,
+      const res = await axiosRequest.put(
+        endpoint.user.uploadDocument,
         bodyFormData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true,
+        
         }
       );
       setResponse(res.data);

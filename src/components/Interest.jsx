@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Title from './Title';
-import axios from 'axios';
+
 import InputLabel from '@material-ui/core/InputLabel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormControl from '@material-ui/core/FormControl';
@@ -15,6 +15,8 @@ import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import { Button, Popover, Tab, Tabs } from '@material-ui/core';
+import { endpoint } from '../config/endpoints';
+import { axiosRequest } from '../http/axiosRequest';
 const useStyles = makeStyles((theme) => ({
   depositContext: {
     flex: 1,
@@ -52,9 +54,9 @@ const id = open ? 'simple-popover' : undefined;
   };
 
   // const withDrawSubmit = async() => {
-  //    await axios.post("http://localhost:4000/transaction/withdraw" , {amount,iban}, {withCredentials: true,});
+  //    await axiosRequest.post("http://localhost:4000/transaction/withdraw" , {amount,iban}, {withCredentials: true,});
   //    const balanceAdd = async () => {
-  //     const res = await axios.get(
+  //     const res = await axiosRequest.get(
   //       "http://localhost:4000/account/balance",
   //       { withCredentials: true }
   //     );
@@ -66,12 +68,10 @@ const id = open ? 'simple-popover' : undefined;
   //   balanceAdd();
   // }
           const getEarnedInteres = async () => {
-          const res = await axios.get(
-            `${process.env.REACT_APP_API_DATA}/account/ie`,
+          const res = await axiosRequest.get(
+            endpoint.account.interestEarned
 
-            {
-              withCredentials: true,
-            }
+           
           );
           settotalEarn(res.data.totalEarn);
           setBioMonthlyEarned(res.data.BioMonthlyEarn);

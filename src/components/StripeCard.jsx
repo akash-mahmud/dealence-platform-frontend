@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useElements, useStripe, IbanElement } from '@stripe/react-stripe-js';
-import axios from 'axios';
+import React, { useState } from 'react'
+import {  CardCvcElement, CardExpiryElement, CardNumberElement,   useElements, useStripe } from '@stripe/react-stripe-js';
 
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-
 import {
+
+
   Container,
   Dialog,
   DialogActions,
@@ -13,43 +13,48 @@ import {
   DialogContentText,
   DialogTitle,
   makeStyles,
+
 } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 
-const IBAN_ELEMENT_OPTIONS = {
-  supportedCountries: ['SEPA'],
 
-  placeholderCountry: 'DE',
-};
-function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
-      const useStyles = makeStyles((theme) => ({
-        imgibn: {
-          width: '74%',
-          margin: ' 0 auto',
+
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import { axiosRequest } from '../http/axiosRequest';
+import { endpoint } from '../config/endpoints';
+
+function StripeCard({ balance, setstripeDialogue, setInvestBalance }) {
+    const useStyles = makeStyles((theme) => ({
+      strpfrm: {
+        padding: '3rem',
+        paddingTop: '0',
+      },
+      img: {
+        margin: ' 0 auto',
+      },
+      loader: {
+        width: '34%',
+      },
+      [theme.breakpoints.down('xs')]: {
+        strpfrm: {
+          padding: '0',
         },
+        img: {
+          margin: 'unset',
+        },
+      },
+      [theme.breakpoints.down('sm')]: {
         loader: {
-          width: '34%',
+          width: '53%',
         },
-        [theme.breakpoints.down('xs')]: {
-          imgibn: {
-            width: 'unset',
-            margin: ' unset',
-          },
-        },
-        [theme.breakpoints.down('sm')]: {
-          loader: {
-            width: '53%',
-          },
-        },
-        [theme.breakpoints.down('md')]: {},
-      }));
-      const classes = useStyles()
+      },
+      [theme.breakpoints.down('md')]: {},
+    }));
+      const classes = useStyles();
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
-
+  const [loadingFOrAfter, setLoadingFOrAfter] = useState(false);
   const stripe = useStripe();
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const elements = useElements();
 
   let [openDialogAfter, setOpenDialogAfter] = useState(false);
   const [successFull, setsuccessFull] = useState(false);
@@ -57,147 +62,47 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
   const [failed, setfailed] = useState(false);
 
   const [failedMessage, setfailedMessage] = useState('');
-  const elements = useElements();
+
   const cloSeModelSucess = () => {
-    setebanDialogue(false);
+    setstripeDialogue(false);
     setOpenDialogAfter(false);
     setsuccessFull(false);
-        window.location.reload();
+    window.location.reload()
   };
   const handleCloseDialog = () => {
-    setOpenDialogAfter(false);
         window.location.reload();
+ setstripeDialogue(false);
+ setOpenDialogAfter(false);
+ setsuccessFull(false);
   };
-  const [clintSecretData, setclintSecretData] = useState();
 
-  const handleSubmit = async (event) => {
+  const handelSubmit = async (event) => {
+    setsuccessFull(false);
+    setLoadingFOrAfter(true);
     setOpenDialogAfter(true);
-
-    setLoading(true);
+    // setstripeDialogue(false);
     event.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-    const getClientSecret = async () => {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_API_DATA}/transaction/create-payment`,
-        { amount: balance }
-      );
-      return data.clientSecret;
-    };
-    const clientSecret = await getClientSecret();
-    setclintSecretData(clientSecret);
-  
-    const iban = elements.getElement(IbanElement);
-
-    const result = await stripe.confirmSepaDebitPayment(clientSecret, {
-      payment_method: {
-        sepa_debit: iban,
-        billing_details: {
-          name: name,
-          email: email,
-        },
-      },
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: elements.getElement(CardNumberElement),
     });
+    if (!error) {
 
-    if (result.paymentIntent.status === 'processing') {
-      let dataStatus;
-      const myFunc = async () => {
-        const { paymentIntent } = await stripe.retrievePaymentIntent(
-          clientSecret
-        );
-        if (paymentIntent && paymentIntent.status === 'succeeded') {
-          const { data } = await axios.post(
-            `${process.env.REACT_APP_API_DATA}/transaction/deposit`,
-            { paymentIntent, amount: balance },
-            {
-              withCredentials: true,
-            }
-          );
-          const getData = async () => {
-            const res = await axios.get(
-              `${process.env.REACT_APP_API_DATA}/account/balance`,
-              {
-                withCredentials: true,
-              }
-            );
-
-            setInvestBalance(res.data.balance);
-
-            // credit;
-          };
-
-          getData();
-          setsuccessFull(true);
-        } else {
-      
-          dataStatus = paymentIntent.status;
-
-          if (dataStatus === 'processing') {
-            const myDataLoadingLastTry = async () => {
-              const { paymentIntent } = await stripe.retrievePaymentIntent(
-                clientSecret
-              );
-
-              if (paymentIntent && paymentIntent.status === 'succeeded') {
-                const { data } = await axios.post(
-                  `${process.env.REACT_APP_API_DATA}/transaction/deposit`,
-                  { paymentIntent, amount: balance },
-                  {
-                    withCredentials: true,
-                  }
-                );
-                const getData = async () => {
-                  const res = await axios.get(
-                    `${process.env.REACT_APP_API_DATA}/account/balance`,
-                    {
-                      withCredentials: true,
-                    }
-                  );
-
-                  setInvestBalance(res.data.balance);
-
-                  // credit;
-                };
-
-                getData();
-                setsuccessFull(true);
-              } else {
-                setfailed(true);
-                setfailedMessage(
-                  'Payment failed, check your bank account, change'
-                );
-              }
-            };
-            setTimeout(myDataLoadingLastTry, 5000);
-          } else {
-            setfailed(true);
-            setfailedMessage(
-              'Payment failed, check your bank account, change '
-            );
-          }
-        }
-      };
-
-      setTimeout(myFunc, 5000);
-    } else if (result.paymentIntent.status === 'succeeded') {
-      const { paymentIntent } = await stripe.retrievePaymentIntent(
-        clientSecret
-      );
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_API_DATA}/transaction/deposit`,
-        { paymentIntent, amount: balance },
-        {
-          withCredentials: true,
-        }
-      );
-      const getData = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_DATA}/account/balance`,
+      const { id } = paymentMethod;
+      try {
+        const { data } = await axiosRequest.post(
+         endpoint.transaction.createPaymentIntent,
           {
-            withCredentials: true,
-          }
+            id,
+            amount: balance,
+          },
+         
+        );
+
+        if (data.message === 'success') {
+      const getData = async () => {
+        const res = await axiosRequest.get(
+         endpoint.account.getbalance
         );
 
         setInvestBalance(res.data.balance);
@@ -206,88 +111,164 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
       };
 
       getData();
-
-      setsuccessFull(true);
-    }
-
-    if (result.error) {
-      setLoading(false);
-      setebanDialogue(false);
-      // Show error to your customer.
-      setfailed(true);
-      setfailedMessage('Payment failed, check your bank account, change ');
+        
+          setsuccessFull(true);
+          // NotificationManager.success(data.message);
+        } else {
+          setfailed(true);
+          setfailedMessage(data.message);
+        }
+        setLoadingFOrAfter(false);
+        // setstripeDialogue(false);
+        // window.location.reload();
+      } catch (error) {
+        setstripeDialogue(false);
+      }
     } else {
+      // console.log(error);
     }
   };
 
-  //   })();
-  // DE89 3704 0044 0532 0130 00
-
-  const openSupportChat = () => {
-    if (window.tidioChatApi) {
-      setebanDialogue(false);
-      setOpenDialogAfter(false);
-      setsuccessFull(false);
-      window.tidioChatApi.open();
-    }
-  };
   return (
     <>
-      <div
-        className="eban"
+      {/* <div style={{ maxWidth: '400px', margin: '0 auto' }}> */}
+      <fieldset
+        disabled={loadingFOrAfter}
         style={{
-          maxWidth: '400px',
-          margin: '0 auto',
-          display: `${
-            successFull === true
-              ? 'none'
-              : openDialogAfter === true
-              ? 'none'
-              : ''
-          }`,
+          border: 'none',
+          display: `${openDialogAfter === true ? 'none' : 'block'}`,
         }}
       >
-        <div className={clsx(classes.imgibn, 'ibnImg')} style={{}}>
-          <img alt="" src={'./image/SEPA.png'} />
-        </div>
-        <form onSubmit={handleSubmit}>
-          <label>{t('iban_Your_Name')}</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Jhon Doe"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <label>{t('Your_Email')} </label>
-          <input
-            type="email"
-            placeholder="example@gmail.com"
-            name="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <label>IBAN:</label>
-          <div className="elements">
-            <IbanElement options={IBAN_ELEMENT_OPTIONS} />
-          </div>
-          <button
-            className="pay-button"
-            type="submit"
-            disabled={!stripe || loading === true}
-          >
-            {t('Deposit_btn')}
-          </button>
-
+        <div className={classes.strpfrm} style={{}}>
           <div
-            className="mandate-acceptance"
+            className={clsx(classes.img, 'crdtImg')}
             style={{
-              fontSize: '14px',
-              marginBottom: '39px',
+              width: '67%',
             }}
           >
-            {t('mandate_text')}
+            <img alt="" src={'./image/Credit.png'} />
           </div>
-        </form>
-      </div>
+          <div
+            style={{
+              maxWidth: '500px',
+              margin: '0 auto',
+            }}
+          >
+            <label style={{ marginBottom: '10px' }}>
+              {t('Enter_your_card_details')}
+            </label>
+            <form
+              onSubmit={handelSubmit}
+              style={{
+                display: 'block',
+                width: '100%',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                {/* <CardElement
+                  className="cardData"
+                  options={{
+                    style: {
+                      base: {
+                        backgroundColor: 'white',
+                        width: '500px',
+                      },
+                    },
+                  }}
+                /> */}
+
+                <CardNumberElement
+                  className="cardData"
+                  options={{
+                    style: {
+                      base: {
+                        backgroundColor: 'white',
+                        width: '500px',
+                        fontFamily: 'Poppins,sans-serif',
+                        fontStyle: 'normal',
+                      },
+                    },
+                  }}
+                />
+
+                <CardExpiryElement
+                  className="cardData"
+                  options={{
+                    style: {
+                      base: {
+                        backgroundColor: 'white',
+                        width: '500px',
+                        fontFamily: 'Poppins,sans-serif',
+                        fontStyle: 'normal',
+                      },
+                    },
+                  }}
+                />
+                <CardCvcElement
+                  className="cardData"
+                  options={{
+                    style: {
+                      base: {
+                        backgroundColor: 'white',
+                        width: '500px',
+                        fontFamily: 'Poppins,sans-serif',
+                        fontStyle: 'normal',
+                      },
+                    },
+                  }}
+                />
+                <button
+                  className="pay-button"
+                  type="submit"
+                  disabled={!stripe || loadingFOrAfter === true}
+                >
+                  {t('Deposita')}
+                </button>
+                <div
+                  style={{
+                    width: '51%',
+                    margin: '11px  auto',
+                    marginRight: '28%',
+                  }}
+                >
+                  <img
+                    src="./paymethods.png"
+                    alt="payment"
+                    width={'    114%'}
+                  />
+                </div>
+                <div className="bottomDiv">
+                  <div className="sheildIcon">
+                    <VerifiedUserIcon />
+                  </div>
+                  <div>
+                    <p
+                      style={{
+                        fontWeight: '600',
+                      }}
+                    >
+                      {t('Secure_payment')}{' '}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                      }}
+                    >
+                      {t('We_promise_you_secure_payment')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </fieldset>
 
       <Dialog
         open={openDialogAfter}
@@ -322,7 +303,6 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
               <div
                 className={classes.loader}
                 style={{
-                  // width: '34%',
                   margin: '0 auto',
                   marginTop: '152px',
                   height: `${successFull === true ? '200px' : ''}`,
@@ -352,6 +332,7 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
                   display: `${successFull === false ? 'none' : ''}`,
                 }}
               >
+                {/* // #1274E7 */}
                 <i
                   style={{
                     color: '#1274E7',
@@ -451,7 +432,7 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
               <Container component="main" maxWidth="xs">
                 <div
                   style={{
-                    width: '34%',
+                    width: '36%',
                     margin: '0 auto',
                     marginTop: '207px',
                     height: `${failed === true ? '299px' : ''}`,
@@ -518,18 +499,7 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
                         marginTop: '7px',
                       }}
                     >
-                      {t('deposit_method_or_please_contact_our')}{' '}
-                      <span
-                        onClick={openSupportChat}
-                        style={{
-                          textDecoration: 'underline',
-                          color: '#0041C1',
-                          /* padding-left: 5px; */
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {t('support_chat')}
-                      </span>
+                      {t('try_again')}
                     </span>
                   </div>
                 </div>
@@ -539,7 +509,7 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
                     marginBottom: '167px',
                     textAlign: 'center',
                     marginTop: '15px',
-                    marginLeft: '20px',
+                    marginLeft: '14px',
                     display: `${failed === true ? 'none' : ''}`,
                     fontSize: '22px',
                   }}
@@ -554,8 +524,9 @@ function EbanMethod({ balance, setebanDialogue, setInvestBalance }) {
           <DialogActions></DialogActions>
         </div>
       </Dialog>
+      {/* </div> */}
     </>
   );
 }
 
-export default EbanMethod;
+export default StripeCard

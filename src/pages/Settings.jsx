@@ -1,7 +1,7 @@
 import { Container, makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
+
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Title from "../components/Title";
@@ -10,10 +10,12 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { NotificationManager } from 'react-notifications';
+import { toast } from 'react-toastify';
 import Copyright from "../components/Copyright";
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/use-auth';
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 const useStyles = makeStyles((theme) => ({
     root: {
         display: "flex",
@@ -87,9 +89,7 @@ export default function Account() {
 
     useEffect(() => {
         const getUser = async () => {
-            const res = await axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-              withCredentials: true,
-            });
+          const res = await axiosRequest.get(endpoint.user.me);
 
             setContactInformation({
                 email: res.data.email,
@@ -119,23 +119,20 @@ export default function Account() {
             }
 
             try {
-                await axios.put(
-                  `${process.env.REACT_APP_API_DATA}/user/updatePassword`,
+              await axiosRequest.put(
+                 endpoint.user.updatePassword,
                   payload,
-                  {
-                    withCredentials: true,
-                  }
+                 
                 );
 
-                NotificationManager.success(
-                    "Password successfully updated",
-                    "Success"
+                toast.success(
+                    "Password successfully updated"
+                   
                 );
             } catch (error) {
            
-                NotificationManager.error(
-                    "There was an error updating the password. Please check the old password and retry",
-                    "Could not update password"
+                toast.error(
+                    "There was an error updating the password. Please check the old password and retry"
                 );
             }
         };
@@ -151,24 +148,21 @@ export default function Account() {
             }
 
             try {
-                await axios.put(
-                  `${process.env.REACT_APP_API_DATA}/user/updateContactInfo`,
+              await axiosRequest.put(
+                  endpoint.user.updateContactInfo,
                   payload,
-                  {
-                    withCredentials: true,
-                  }
+                  
                 );
 
-                NotificationManager.success(
-                    "Contact information successfully updated",
-                    "Success"
+                toast.success(
+                    "Contact information successfully updated"
                 );
             } catch (error) {
                
 
-                NotificationManager.error(
+                toast.error(
                     "There was an error updating your contact info. Please retry",
-                    "Error"
+                  
                 );
             }
         };
@@ -189,24 +183,20 @@ export default function Account() {
             }
 
             try {
-                await axios.put(
-                  `${process.env.REACT_APP_API_DATA}/user/updatePersonalDetails`,
+              await axiosRequest.put(
+                endpoint.user.updatePersonalDetails,
                   payload,
-                  {
-                    withCredentials: true,
-                  }
+                 
                 );
 
-                NotificationManager.success(
-                    "Personal details updated",
-                    "Success"
+                toast.success(
+                    "Personal details updated"
                 );
             } catch (error) {
               
 
-                NotificationManager.error(
-                    "There was an error updating your personal details. Please retry",
-                    "Error"
+                toast.error(
+                    "There was an error updating your personal details. Please retry"
                 );
             }
         };

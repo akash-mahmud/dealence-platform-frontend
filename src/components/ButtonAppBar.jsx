@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
 import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,10 +32,10 @@ import { useAuth } from '../hooks/use-auth';
 import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
 import logo from '../logo.png';
-import Axios from 'axios';
+
 import MenuIcon from '@material-ui/icons/Menu';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
-import { NotificationManager } from 'react-notifications';
+import { toast } from 'react-toastify';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Person from '@material-ui/icons/Person';
 import AppsIcon from '@material-ui/icons/Apps';
@@ -54,6 +54,8 @@ import LanguageIcon from '@material-ui/icons/Language';
 import StripeCard from './StripeCard';
 import EbanMethod from './EbanMethod';
 import { useTranslation } from 'react-i18next';
+import { axiosRequest } from '../http/axiosRequest';
+import { endpoint } from '../config/endpoints';
 
 // import {useTranslation} from "react-i18next";
 const drawerWidth = 240;
@@ -148,6 +150,7 @@ export default function ButtonAppBar(props) {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
+      overflowX:'hidden'
     },
     paper: {
       padding: theme.spacing(2),
@@ -355,14 +358,12 @@ export default function ButtonAppBar(props) {
   
 
     if (e.target.value >= 500) {
-      const { data } = await Axios.post(
-        `${process.env.REACT_APP_API_DATA}/transaction/crypto`,
+      const { data } = await axiosRequest.post(
+       endpoint.transaction.crypto,
         {
           amount: e.target.value,
         },
-        {
-          withCredentials: true,
-        }
+    
       );
 
       setCoinbaseCheckoutData(data);
@@ -374,10 +375,7 @@ export default function ButtonAppBar(props) {
 
   let [notificationsEnabled, setNotificationsEnabled] = React.useState(false);
   let [openDrawer, setOpenDrawer] = React.useState(window.innerWidth >= 960);
-  useEffect(() => {
-  console.log(process);
-  }, [])
-  
+
 
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
@@ -394,7 +392,7 @@ export default function ButtonAppBar(props) {
       const payload = { notificationsEnabled: newNotificationsStatus };
 
       try {
-        await Axios.put(
+        await axiosRequest.put(
           `${process.env.REACT_APP_API_DATA}/user/updateNotificationStatus`,
           payload,
           {
@@ -419,14 +417,12 @@ export default function ButtonAppBar(props) {
   const requestServerToCrypto = async () => {
     if (depositAmmount >= 500) {
       setbuttonSelected('crypto');
-      const { data } = await Axios.post(
-        `${process.env.REACT_APP_API_DATA}/transaction/crypto`,
+      const { data } = await axiosRequest.post(
+        endpoint.transaction.crypto,
         {
           amount: depositAmmount,
         },
-        {
-          withCredentials: true,
-        }
+
       );
 
       setCoinbaseCheckoutData(data);
@@ -445,8 +441,8 @@ export default function ButtonAppBar(props) {
   const [withdrawAmount, setwithdrawAmount] = useState();
   const handleClickOpenDialog = () => {
     if (!auth.user.isActive) {
-      NotificationManager.error(
-        t('Verify_your_account_before'),
+      toast.error(
+        t('Verify_your_account_before')+
         t('Unverified_account')
       );
 
@@ -459,29 +455,26 @@ export default function ButtonAppBar(props) {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-
-  useEffect(() => {
-    const getData = async () => {
-      const res = await Axios.get(
-        `${process.env.REACT_APP_API_DATA}/account/balance`,
-        {
-          withCredentials: true,
-        }
+    const getData = useCallback(async () => {
+      const res = await axiosRequest.get(
+       endpoint.account.getbalance
       );
 
       setBalance(res.data.balance);
       setcredit(res.data.credit);
       // credit;
-    };
+    }, []); 
+  useEffect(() => {
+
 
     getData();
-  });
+  },[getData]);
 
   let [sdk, setSdk] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await Axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
+      const res = await axiosRequest.get(endpoint.user.me, {
         withCredentials: true,
       });
 
@@ -495,11 +488,8 @@ export default function ButtonAppBar(props) {
   const [creditData, setcreditData] = useState(0);
   useEffect(() => {
     const getData = async () => {
-      const res = await Axios.get(
-        `${process.env.REACT_APP_API_DATA}/account/balance`,
-        {
-          withCredentials: true,
-        }
+      const res = await axiosRequest.get(
+       endpoint.account.getbalance
       );
 
       setcreditData(res.data.credit);
@@ -509,19 +499,16 @@ export default function ButtonAppBar(props) {
   const approveTrans = (data, actions) => {
     return actions.order.capture().then(function (details) {
       console.log(details);
-      Axios
+      axiosRequest
         .post(
-          `${process.env.REACT_APP_API_DATA}/transaction/deposit`,
+         endpoint.transaction.deposit,
           details,
-          {
-            withCredentials: true,
-          }
+         
         )
         .then(function () {
           const balanceAdd = async () => {
-            const res = await Axios.get(
-              `${process.env.REACT_APP_API_DATA}/account/balance`,
-              { withCredentials: true }
+            const res = await axiosRequest.get(
+              endpoint.account.getbalance
             );
 
             setBalance(res.data.balance);
@@ -559,8 +546,8 @@ export default function ButtonAppBar(props) {
 
   const withdrawHandleOpen = () => {
     if (!auth.user.isActive) {
-      NotificationManager.error(
-        t('Verify_your_withdraw'),
+      toast.error(
+        t('Verify_your_withdraw')+
         t('Unverified_account')
       );
 
@@ -598,7 +585,7 @@ export default function ButtonAppBar(props) {
   const currentRouteName = routeMap[useLocation().pathname];
 
   const getPayment = async () => {
-    // const { data } = await Axios.post(
+    // const { data } = await axiosRequest.post(
     //   'http://localhost:4000/transaction/create-payment-intent',
     //   {
     //     amount: depositAmmount,
@@ -716,10 +703,10 @@ export default function ButtonAppBar(props) {
   const cryptoDataSendToServer = async (e) => {
     setwithdrawLoading(true);
     e.preventDefault();
-    const { data } = await Axios.post(
-      `${process.env.REACT_APP_API_DATA}/transaction/crypto/withdraw`,
+    const { data } = await axiosRequest.post(
+      endpoint.transaction.cryptoWithdraw,
       { withdrawAmount, cryptoAddress, crypto, withdrawName, withdrawEmail },
-      { withCredentials: true }
+      
     );
     if (data === 'success') {
       setcryptoWithdrawModelSuccesfulText(true);
@@ -727,11 +714,8 @@ export default function ButtonAppBar(props) {
       setwithdrawLoading(false);
       setsuccessWindow(true);
       const getData = async () => {
-        const res = await Axios.get(
-          `${process.env.REACT_APP_API_DATA}/account/balance`,
-          {
-            withCredentials: true,
-          }
+        const res = await axiosRequest.get(
+         endpoint.account.getbalance
         );
 
         setBalance(() => res.data.balance);
@@ -745,8 +729,8 @@ export default function ButtonAppBar(props) {
   const ibanDataSendToServer = async (e) => {
     setwithdrawLoading(true);
     e.preventDefault();
-    const { data } = await Axios.post(
-      `${process.env.REACT_APP_API_DATA}/transaction/withdraw`,
+    const { data } = await axiosRequest.post(
+      endpoint.transaction.withdraw,
       {
         withdrawAmount,
         withdrawNameFull,
@@ -755,7 +739,7 @@ export default function ButtonAppBar(props) {
         withdrawEmail,
         iban,
       },
-      { withCredentials: true }
+
     );
 
     if (data === 'success') {
@@ -765,11 +749,9 @@ export default function ButtonAppBar(props) {
       // NotificationManager.success(data);
 
       const getData = async () => {
-        const res = await Axios.get(
-          `${process.env.REACT_APP_API_DATA}/account/balance`,
-          {
-            withCredentials: true,
-          }
+        const res = await axiosRequest.get(
+          endpoint.account.getbalance,
+        
         );
 
         setBalance(() => res.data.balance);
@@ -803,12 +785,10 @@ export default function ButtonAppBar(props) {
   };
 const [failedCryptoDeposit, setfailedCryptoDeposit] = useState(false)
   const depostByCrypto = async () => {
-      const  data  = await Axios.post(
-        `${process.env.REACT_APP_API_DATA}/transaction/cr`,
+      const  data  = await axiosRequest.post(
+        endpoint.transaction.cr,
         {depositAmmount},
-        {
-          withCredentials: true,
-        }
+       
       );
    
   }
@@ -1156,11 +1136,8 @@ setfailedCryptoDeposit(false);
                         depostByCrypto();
                         // setBalance;
                         const getData = async () => {
-                          const res = await Axios.get(
-                            `${process.env.REACT_APP_API_DATA}/account/balance`,
-                            {
-                              withCredentials: true,
-                            }
+                          const res = await axiosRequest.get(
+                           endpoint.account.getbalance
                           );
 
                           props.setBalance(res.data.balance);
@@ -1254,11 +1231,8 @@ setfailedCryptoDeposit(false);
                             depostByCrypto();
                             // setBalance;
                             const getData = async () => {
-                              const res = await Axios.get(
-                                `${process.env.REACT_APP_API_DATA}/account/balance`,
-                                {
-                                  withCredentials: true,
-                                }
+                              const res = await axiosRequest.get(
+                                endpoint.account.getbalance
                               );
 
                               props.setBalance(res.data.balance);
@@ -1533,12 +1507,10 @@ setfailedCryptoDeposit(false);
                     disabled={
                       !withdrawEmail ||
                       !withdrawAmount ||
-                      creditData === 0 ||
-                      withdrawAmount < 0 ||
-                      withdrawAmount === 0 ||
+                      !creditData ||
+
                       withdrawAmount > creditData
-                        ? true
-                        : false
+                    
                     }
                   >
                     Iban
@@ -1568,12 +1540,10 @@ setfailedCryptoDeposit(false);
                         disabled={
                           !withdrawEmail ||
                           !withdrawAmount ||
-                          creditData === 0 ||
-                          withdrawAmount < 0 ||
-                          withdrawAmount === 0 ||
+                          !creditData  ||
+
                           withdrawAmount > creditData
-                            ? true
-                            : false
+                           
                         }
                       >
                         Crypto
@@ -2290,6 +2260,8 @@ setfailedCryptoDeposit(false);
               <ListItemText primary={t('Settings')} />
             </ListItem>
 
+
+            
             <ListItem
               onClick={() =>
                 window.open('https://www.dealence.com/blog', '_blank')

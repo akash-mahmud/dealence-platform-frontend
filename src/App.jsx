@@ -6,9 +6,8 @@ import Contract from "./pages/Contract";
 import ButtonAppBar from './components/ButtonAppBar';
 import PrivateRoute from './PrivateRoute';
 import { ProvideAuth } from './hooks/use-auth';
-import dotenv from 'dotenv'
-import { NotificationContainer } from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
+
+
 import './App.css'
 import { createTheme, CssBaseline, makeStyles, ThemeProvider } from '@material-ui/core';
 import Settings from './pages/Settings';
@@ -17,8 +16,11 @@ import Verification from './pages/Verification';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Investments from './pages/Investments';
-import axios from 'axios';
+
 import { useState } from 'react';
+import { api } from './config/api';
+import { axiosRequest } from './http/axiosRequest';
+import { endpoint } from './config/endpoints';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -43,7 +45,7 @@ const theme = createTheme({
 
 function App() {
 
-  dotenv.config()
+
   const classes = useStyles();
 
   const [balance, setBalance] = useState(0);
@@ -57,8 +59,9 @@ function App() {
   });
 
   const getPayouts = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_DATA}/account/balance`,
+    console.log(api);
+    const res = await axiosRequest.get(
+     endpoint.account.getbalance,
       {
         withCredentials: true,
       }
@@ -133,7 +136,7 @@ function App() {
             </Switch>
           </div>
         </Router>
-        <NotificationContainer />
+
       </ProvideAuth>
     </ThemeProvider>
   );

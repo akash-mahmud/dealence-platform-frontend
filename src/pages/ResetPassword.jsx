@@ -9,8 +9,8 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import axios from "axios";
-import { NotificationManager } from "react-notifications";
+
+import { toast } from "react-toastify";
 import Copyright from "../components/Copyright";
 import { useAuth } from "../hooks/use-auth";
 import StartPageSlide from '../components/StartPageSlide';
@@ -18,6 +18,8 @@ import LanguageSelect from '../components/LanguageSelect';
 import { Paper } from "@material-ui/core";
 import logo from '../logo.png';
 import { useTranslation } from 'react-i18next';
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: 96,
@@ -105,7 +107,7 @@ useEffect(() => {
         const checkToken = async () => {
 
             
-            const res = await axios.get(`${process.env.REACT_APP_API_DATA}/user/reset`, {
+          const res = await axiosRequest.get(endpoint.user.reset, {
               params: {
                 resetPasswordToken: token,
               },
@@ -121,8 +123,8 @@ useEffect(() => {
     }, [])
 
     const updatePassword = async () => {
-        const res = await axios.put(
-          `${process.env.REACT_APP_API_DATA}/user/updatePasswordViaEmail`,
+      const res = await axiosRequest.put(
+          endpoint.user.updatePasswordViaEmail,
           {
             email: email,
             password: password,
@@ -132,10 +134,10 @@ useEffect(() => {
 
         if (res.data.message === 'password updated') {
             setUpdated(true);
-            NotificationManager.success(t('Password_correctly_updated'));
+            toast.success(t('Password_correctly_updated'));
         } else {
             setUpdated(false);
-            NotificationManager.error(t('Problem_resetting'));
+            toast.error(t('Problem_resetting'));
         }
     }
 

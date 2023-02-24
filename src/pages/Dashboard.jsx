@@ -9,12 +9,14 @@ import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core";
 import Transactions from "../components/Transactions";
 import Chart from "../components/Chart";
-import axios from "axios";
+
 import Investment from "../components/Investment";
 import SwipeableTextMobileStepper from "../components/MyCarousel";
 import Interest from "../components/Interest";
 import InvestmentList from "../components/InvestmentsList";
 import MyCausoulSecond from "../components/MyCausoulSecond";
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -22,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: "100vh",
     overflow: "auto",
+    overflowX:'hidden'
   },
   container: {
     paddingTop: theme.spacing(3),
@@ -92,7 +95,7 @@ const Dashboard = ({ getPayouts ,          setBalance,
   };
 
   // const getPayouts = async () => {
-  //   const res = await axios.get(`${process.env.REACT_APP_API_DATA}/account/balance`, {
+  //   const res = await axiosRequest.get(`${process.env.REACT_APP_API_DATA}/account/balance`, {
   //     withCredentials: true,
   //   });
 
@@ -103,11 +106,8 @@ const Dashboard = ({ getPayouts ,          setBalance,
   // };
 
   const getIncrements = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_DATA}/investment/list`,
-      {
-        withCredentials: true,
-      }
+    const res = await axiosRequest.get(
+      endpoint.investment.list
     );
   
     setPages(res.data.paginatedIncrements);
@@ -118,9 +118,7 @@ const Dashboard = ({ getPayouts ,          setBalance,
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-        withCredentials: true,
-      });
+      const res = await axiosRequest.get(endpoint.user.me);
       if (res.data) {
         setActive(res.data.isActive);
       }
@@ -136,6 +134,8 @@ const Dashboard = ({ getPayouts ,          setBalance,
     getIncrements();
   };
   const [openSelect, setopenSelect] = useState(false);
+  const [openReinvesSelect, setopenReinvesSelect] = useState(false);
+  const [openReinvesSelect2, setopenReinvesSelect2] = useState(false);
   const [plan, setPlan] = useState('');
   const [invest, setInvest] = useState(null);
   const [openSelect2, setopenSelect2] = useState(false);
@@ -201,7 +201,7 @@ const Dashboard = ({ getPayouts ,          setBalance,
                 />
               </Paper>
             </Grid>
-
+            {/* Interest earned card */}
             <Grid item xs={12} md={4} lg={4}>
               <Paper className={fixedHeightPaper}>
                 <Interest interest={interest} payouts={payouts} />
@@ -215,6 +215,16 @@ const Dashboard = ({ getPayouts ,          setBalance,
                   setBalance={setBalance}
                   credit={credit}
                   setcredit={setcredit}
+                  setopenSelect2={setopenReinvesSelect2}
+                  openSelect2={openReinvesSelect2}
+                  setInvest={setInvest}
+                  invest={invest}
+                  setopenSelect={setopenReinvesSelect}
+                  openSelect={openReinvesSelect}
+                  setPlan={setPlan}
+                  plan={plan}
+                  // dataClicked={myChildData}
+                  investmentCallback={investmentCallback}
                 />
               </Paper>
             </Grid>
@@ -228,7 +238,7 @@ const Dashboard = ({ getPayouts ,          setBalance,
 
             {/* Transactions */}
             <Grid className="recentTable" item xs={12} md={4} lg={5}>
-              <Paper className={classes.paper} style={{ height: '100%' }}>
+              <Paper className={classes.paper} style={{ height: "100%" }}>
                 <Transactions
                   transactions={transactions}
                   setTransactions={setTransactions}

@@ -1,13 +1,15 @@
 import { Container, makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
+
 import Copyright from "../components/Copyright";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Title from "../components/Title";
 import Typography from "@material-ui/core/Typography";
 import Link from '@material-ui/core/Link';
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 
 const useStyles = makeStyles((theme) => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -41,11 +43,8 @@ export default function Account() {
 
     useEffect(() => {
         const getUser = async () => {
-            const res = await axios.get(
-              `${process.env.REACT_APP_API_DATA}/user/me`,
-              {
-                withCredentials: true,
-              }
+            const res = await axiosRequest.get(
+             endpoint.user.me
             );
 
             setUser(res.data);

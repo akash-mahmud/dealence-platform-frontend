@@ -12,10 +12,12 @@ import { useTranslation } from 'react-i18next';
 
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import axios from 'axios';
+
 import InformationForm from '../components/InformationForm';
 import Copyright from '../components/Copyright';
 import Title from '../components/Title';
+import { endpoint } from '../config/endpoints';
+import { axiosRequest } from '../http/axiosRequest';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,9 +77,7 @@ export default function Verification() {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-        withCredentials: true,
-      });
+      const res = await axiosRequest.get(endpoint.user.me);
 
       if (res.data) {
      

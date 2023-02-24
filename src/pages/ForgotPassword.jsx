@@ -10,8 +10,8 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import axios from "axios";
-import { NotificationManager } from "react-notifications";
+
+import { toast } from "react-toastify";
 import Copyright from "../components/Copyright";
 import { Paper } from "@material-ui/core";
 import LanguageSelect from "../components/LanguageSelect";
@@ -20,6 +20,8 @@ import logo from '../logo.png';
 import StartPageSlide from "../components/StartPageSlide";
 import { useAuth } from "../hooks/use-auth";
 import { useHistory, Redirect } from 'react-router-dom';
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: 96,
@@ -100,19 +102,19 @@ useEffect(() => {
 
     const sendEmail = async () => {
         if (email === "") {
-            NotificationManager.error('Enter a valid email', 'Error');
+            toast.error('Enter a valid email');
         } else {
-            const res = await axios.post(
-              `${process.env.REACT_APP_API_DATA}/user/forgot`,
+          const res = await axiosRequest.post(
+             endpoint.user.forgot,
               {
                 email: email,
               }
             );
             if (res.data === "email does not exist") {
-                NotificationManager.error('Email does not exist', 'Error');
+                toast.error('Email does not exist');
             } else if (res.status === 200) {
-              NotificationManager.success(
-                t('Check_your_email_to_reset_your_password'),
+              toast.success(
+                t('Check_your_email_to_reset_your_password')+
                 t('Email_sent_successfully')
               );
             }

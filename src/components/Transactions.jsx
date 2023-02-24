@@ -7,9 +7,11 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Title from "./Title";
-import axios from "axios";
+
 import { Typography } from "@material-ui/core";
 import { useTranslation } from 'react-i18next';
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 
 function preventDefault(event) {
   event.preventDefault();
@@ -26,11 +28,9 @@ export default function Transactions(props) {
 
   useEffect(() => {
     const getData = async () => {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_DATA}/transaction`,
-        {
-          withCredentials: true,
-        }
+      const res = await axiosRequest.get(
+       endpoint.transaction.getList
+      
       );
 
       props.setTransactions(res.data);

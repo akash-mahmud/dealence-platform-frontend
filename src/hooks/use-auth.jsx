@@ -1,6 +1,8 @@
-import React, { useState, useContext, createContext, useEffect } from "react";
-import Axios from "axios";
-import { NotificationManager } from 'react-notifications';
+import React, { useState, useContext, createContext, useEffect, useCallback } from "react";
+
+import { toast } from 'react-toastify';
+import { endpoint } from "../config/endpoints";
+import { axiosRequest } from "../http/axiosRequest";
 
 const authContext = createContext();
 
@@ -20,50 +22,58 @@ export const useAuth = () => {
 function useProvideAuth() {
     const [user, setUser] = useState(null);
     const [loadingUser, setLoadingUser] = useState(true);
+  const getUser =useCallback(
+    async () => {
+      try {
+        const res = await axiosRequest.get(endpoint.user.me);
+        if (res.data) {
+          setUser(res.data);
+        } else {
+          setUser(null);
+        }
+        setLoadingUser(() => false);
+      } catch (e) {
+        setLoadingUser(() => false);
+      }
+
+    },
+    [],
+  )
 
     useEffect(() => {
-        const getUser = async () => {
-            const res = await Axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-              withCredentials: true,
-            });
-            if (res.data) {
-                setUser(res.data);
-            } else {
-                setUser(null);
-            }
-            setLoadingUser(false);
-        }
+
         getUser()
     }, [])
 
-    const signin = (username, password, cb) => {
-        return Axios({
-          method: 'post',
-          data: {
+  const signin = (username, password, cb) => {
+      try {
+        return axiosRequest.post(endpoint.user.login,
+
+          {
             username: username,
             password: password,
           },
-          withCredentials: true,
-          url: `${process.env.REACT_APP_API_DATA}/user/login`,
-        }).then((res) => {
+
+
+        ).then((res) => {
           if (res.data === 'success') {
-        
-            Axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-              withCredentials: true,
-            }).then((res) => {
+
+            axiosRequest.get(endpoint.user.me).then((res) => {
               setUser(res.data);
               cb();
             });
           } else {
-            NotificationManager.error('Email or Password not correct', 'Error');
+            toast.error('Email or Password not correct');
           }
         });
+      } catch (error) {
+        toast.error(error.message);
+      }
+
     };
 
     const signout = cb => {
-        Axios.get(`${process.env.REACT_APP_API_DATA}/user/logout`, {
-          withCredentials: true,
-        }).then((res) => {
+        axiosRequest.get(endpoint.user.logout).then((res) => {
           if (res.data === 'success') {
             setUser(null);
             cb();

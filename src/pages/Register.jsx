@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Axios from "axios";
+
 import PasswordStrengthBar from 'react-password-strength-bar';
 
 import Button from "@material-ui/core/Button";
@@ -26,6 +26,8 @@ import { useTranslation } from 'react-i18next';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import StartPageSlide from "../components/StartPageSlide";
+import { axiosRequest } from '../http/axiosRequest';
+import { endpoint } from '../config/endpoints';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: '0',
@@ -126,18 +128,18 @@ useEffect(() => {
   const [password, setPassword] = useState("");
 const [accept, setaccept] = useState(false)
   const register = () => {
-    Axios({
-      method: 'post',
-      data: {
+    axiosRequest.post(endpoint.user.register,
+  
+     {
         first_name: firstName,
         last_name: lastName,
         email: email,
         password: password,
         referrer_code: query.get('referral'),
       },
-      withCredentials: true,
-      url: `${process.env.REACT_APP_API_DATA}/user/register`,
-    }).then((res) => {
+     
+     
+    ).then((res) => {
       if (res.data === 'success') {
         auth.signin(email, password, () => history.replace('/'));
       }

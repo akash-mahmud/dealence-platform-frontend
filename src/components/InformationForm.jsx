@@ -1,13 +1,15 @@
 import React from 'react';
-import axios from 'axios';
+
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { DropzoneArea } from 'material-ui-dropzone';
-import { NotificationManager } from 'react-notifications';
-import { withTranslation, WithTranslation } from 'react-i18next';
-import Title from '../components/Title';
+import { toast } from 'react-toastify';
+import { withTranslation } from 'react-i18next';
+import Title from './Title';
+import { endpoint } from '../config/endpoints';
+import { axiosRequest } from '../http/axiosRequest';
 
 /**
  * I assume we need a function to bundle all the information
@@ -41,9 +43,7 @@ class InformationForm extends React.Component {
 
   componentDidMount() {
     const getUser = async () => {
-      const res = await axios.get(`${process.env.REACT_APP_API_DATA}/user/me`, {
-        withCredentials: true,
-      });
+      const res = await axiosRequest.get(endpoint.user.me);
 
 
       if (res.data) {
@@ -71,22 +71,22 @@ class InformationForm extends React.Component {
          this.setState({ disbaled: true });
         //  disbaled: false,
     if (this.state.idFront == null) {
-      NotificationManager.error(
-        this.props.t('Add_photos'),
+      toast.error(
+        this.props.t('Add_photos')+
         this.props.t('Missing_documents')
       );
 
       return;
     } else if (this.state.idBack == null) {
-      NotificationManager.error(
-        this.props.t('Add_photos'),
+      toast.error(
+        this.props.t('Add_photos')+
         this.props.t('Missing_documents')
       );
 
       return;
     } else if (this.state.proofAddress == null) {
-      NotificationManager.error(
-        this.props.t('Add_photos'),
+      toast.error(
+        this.props.t('Add_photos')+
         this.props.t('Missing_documents')
       );
 
@@ -108,15 +108,15 @@ class InformationForm extends React.Component {
         proof_address: this.state.proofAddress,
       };
 
-      const res = await axios.put(
-        `${process.env.REACT_APP_API_DATA}/user/updateInfo`,
+      const res = await axiosRequest.put(
+        endpoint.user.updateInfo,
         payload,
-        { withCredentials: true }
+
       );
 
       if (res.status == 200) {
-        NotificationManager.success(
-          this.props.t('the_info'),
+        toast.success(
+          this.props.t('the_info')+
           this.props.t('Submitted_successfully')
         );
         setTimeout(()=> {
@@ -124,8 +124,8 @@ class InformationForm extends React.Component {
         }, 1000)
     
       } else {
-        NotificationManager.error(
-          this.props.t('unable'),
+        toast.error(
+          this.props.t('unable')+
           this.props.t('Error')
         );
       }
