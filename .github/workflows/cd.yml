@@ -33,4 +33,4 @@ jobs:
           sudo echo "${{ secrets.ENV_FILE }}" > .env
           sudo pnpm install --only=prod
           sudo pnpm run build --only=prod
-          pm2 restart dealence-platform-frontend
+          sudo pm2 restart dealence-platform-frontend
