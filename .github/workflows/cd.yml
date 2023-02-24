@@ -26,10 +26,11 @@ jobs:
         # password: ${{ secrets.PASSWORD }}
         port: 22
         script: |
-          cd thehawk-server
+          cd dealence-platform-frontend
           sudo git pull origin master
           sudo git status
-          touch .env
-          echo "${{ secrets.ENV_FILE }}" > .env
+          sudo touch .env
+          sudo echo "${{ secrets.ENV_FILE }}" > .env
           sudo pnpm install --only=prod
-          pm2 restart thehawk-server
+          sudo pnpm run build --only=prod
+          pm2 restart dealence-platform-frontend
