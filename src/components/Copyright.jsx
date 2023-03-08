@@ -269,7 +269,8 @@ https://www.dealence.com/terminiecondizioni"
               +41 798421775 ({t('Switzerland')})
             </li>
             <li className={clsx(classes.listItem, classes.contactListItem)}>
-              +39 3791999130 ({t('Italy')})
+              {/* +39 3791999130 ({t('Italy')}) */}
+              +39 371 691 7543
             </li>
             <li className={clsx(classes.listItem, classes.contactListItem)}>
               Contact us by email
