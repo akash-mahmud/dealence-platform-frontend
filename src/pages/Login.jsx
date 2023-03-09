@@ -20,7 +20,7 @@ import logo from '../logo.png';
 import { Checkbox, IconButton, InputAdornment, OutlinedInput } from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import LanguageSelect from '../components/LanguageSelect' 
+import LanguageSelect from '../components/LanguageSelect'
 import StartPageSlide from "../components/StartPageSlide";
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
     // },
   },
   [theme.breakpoints.down('sm')]: {
-  
+
     sld: {
       display: 'none',
     },
@@ -114,36 +114,36 @@ export default function SignIn() {
 
   let { from } = location.state || { from: { pathname: "/" } };
 
-useEffect(() => {
-  // auth.user?
-  if (auth.user) {
-    <Redirect to="/" />;
-    history.push('/');
-  }
-}, [auth.user, history]);
+  useEffect(() => {
+    // auth.user?
+    if (auth.user) {
+      <Redirect to="/" />;
+      history.push('/');
+    }
+  }, [auth.user, history]);
 
 
-     const [values, setValues] = React.useState({
-       showPassword: false,
-     });
+  const [values, setValues] = React.useState({
+    showPassword: false,
+  });
 
-     //  const handleChange = (prop) => (event) => {
-     //    setValues({ ...values, [prop]: event.target.value });
-     //  };
+  //  const handleChange = (prop) => (event) => {
+  //    setValues({ ...values, [prop]: event.target.value });
+  //  };
 
-     const handleClickShowPassword = () => {
-       setValues({ ...values, showPassword: !values.showPassword });
-     };
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
 
-     const handleMouseDownPassword = (event) => {
-       event.preventDefault();
-     };
-   
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
 
   useEffect(() => {
     const listener = (event) => {
       if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        console.log('Enter key was pressed. Run your function.');
+
         event.preventDefault();
         auth.signin(username, password, () => history.replace(from));
       }
@@ -310,7 +310,7 @@ useEffect(() => {
                         history.replace(from)
                       )
                     }
-                
+
                   >
                     {t('Login')}
                   </Button>

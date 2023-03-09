@@ -59,9 +59,9 @@ function App() {
   });
 
   const getPayouts = async () => {
-    console.log(api);
+
     const res = await axiosRequest.get(
-     endpoint.account.getbalance,
+      endpoint.account.getbalance,
       {
         withCredentials: true,
       }

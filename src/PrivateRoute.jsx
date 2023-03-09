@@ -11,8 +11,7 @@ function PrivateRoute({ children, ...rest }) {
     const auth = useAuth()
 
   if (auth.loadingUser) {
-    console.log(auth.user);
-    console.log(auth.loadingUser);
+
       return <p>Loading..</p>;
     }
 

@@ -50,6 +50,7 @@ app.use(
         "https://widget-v4.tidiochat.com/1_141_0/static/js/widget.326fdf51a69c63448a75.js",
         "https://widget-v4.tidiochat.com/1_141_0/static/js/chunk-WidgetIframe-326fdf51a69c63448a75.js",
         "https://widget-v4.tidiochat.com//tururu.mp3",
+        "https://widget-v4.tidiochat.com",
       ],
       connectSrc: [
         "'self'",
@@ -147,5 +148,5 @@ function onError(error) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  console.log("Listening on " + bind);
+ 
 }

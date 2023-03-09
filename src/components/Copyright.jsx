@@ -137,17 +137,21 @@ export default function Copyright() {
         alignContent={'center'}
         // direction="column"
         alignItems="center"
-        justify="center"
-        minHeight="100vh"
+        // justify="center"
+        // minHeight="100vh"
+        style={{
+          alignItems: 'normal',
+          // minHeight:"100vh"
+        }}
         justifyContent="center"
         spacing={1}
       >
         {/* <Grid item xl={0} md={0} sm={1} xs={0}></Grid> */}
         <Grid
           item
-          style={{
-            marginBottom: '60px',
-          }}
+          // style={{
+          //   marginBottom: '60px',
+          // }}
           xl={2}
           md={3}
           sm={3}
@@ -190,7 +194,7 @@ export default function Copyright() {
             {
               // marginLeft: '65px',
               
-    marginBottom: '4%'
+    // marginBottom: '4%'
 
             }
           }
@@ -298,7 +302,7 @@ https://www.dealence.com/terminiecondizioni"
         ></Grid> */}
         <Grid
           style={{
-            marginBottom: '26px',
+            // marginBottom: '26px',
           }}
           item
           xl={2}

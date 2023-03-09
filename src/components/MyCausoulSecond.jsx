@@ -5,6 +5,7 @@ import { autoPlay } from 'react-swipeable-views-utils';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../hooks/use-auth';
+import { v4 as uuid } from 'uuid'
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +70,7 @@ function MyCausoulSecond() {
           enableMouseEvents
         >
           {tutorialSteps.map((step, index) => (
-            <div key={step.label}>
+            <div key={uuid()}>
               {Math.abs(activeStep - index) <= 2 ? (
                 <img
                   onClick={() => {

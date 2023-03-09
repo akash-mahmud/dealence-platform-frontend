@@ -48,127 +48,127 @@ export default function Deposits({
 
 
 
-   const auth = useAuth();
+  const auth = useAuth();
 
-   const [amount, setAmount] = useState("");
-   const [open, setOpen] = useState(false);
-   const [openChange, setOpenChange] = useState(false);
+  const [amount, setAmount] = useState("");
+  const [open, setOpen] = useState(false);
+  const [openChange, setOpenChange] = useState(false);
 
-   const selectClose2 = () => {
-     setopenSelect2(false);
-   };
-   const handleClickOpen = () => {
-     setopenSelect2(true);
-   };
+  const selectClose2 = () => {
+    setopenSelect2(false);
+  };
+  const handleClickOpen = () => {
+    setopenSelect2(true);
+  };
 
-   const handleClose = () => {
-     setOpen(false);
-   };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-   const [accept, setaccept] = useState(false);
+  const [accept, setaccept] = useState(false);
 
-   const selectClose = () => {
-     setopenSelect(false);
-   };
+  const selectClose = () => {
+    setopenSelect(false);
+  };
 
-   const handleClickChange = () => {
-     setPlan(invest.plan);
-     // setOpenChange(true);
-     setopenSelect(true);
-   };
+  const handleClickChange = () => {
+    setPlan(invest.plan);
+    // setOpenChange(true);
+    setopenSelect(true);
+  };
 
-   const handleCloseChange = () => {
-     setOpenChange(false);
-   };
+  const handleCloseChange = () => {
+    setOpenChange(false);
+  };
 
 
-   const submitHandle = async () => {
-     const res = await axiosRequest.post(
-       endpoint.investment.reinvest,
-       { plan, amount },
-   
-     );
+  const submitHandle = async () => {
+    const res = await axiosRequest.post(
+      endpoint.investment.reinvest,
+      { plan, amount },
 
-     if (res.data.message === "success") {
-       setOpen(false);
-       toast.success(`${t("Your_plan")} ${t("Plan_actived")}`);
-       investmentCallback();
-     } else {
-       toast.error(`${t("Something")} ${t("Error")}`);
-     }
+    );
 
-     const getData = async () => {
+    if (res.data.message === "success") {
+      setOpen(false);
+      toast.success(`${t("Your_plan")} ${t("Plan_actived")}`);
+      investmentCallback();
+    } else {
+      toast.error(`${t("Something")} ${t("Error")}`);
+    }
 
-       const investData = await axiosRequest.get(
+    const getData = async () => {
+
+      const investData = await axiosRequest.get(
         endpoint.investment.get
-       );
+      );
 
-       setInvest(investData.data);
-       //This line can also work. But it is  not actual solution and it also refresh the page
+      setInvest(investData.data);
+      //This line can also work. But it is  not actual solution and it also refresh the page
 
-       // window.location.reload();
+      // window.location.reload();
 
-       const balance = async () => {
-         const res = await axiosRequest.get(
+      const balance = async () => {
+        const res = await axiosRequest.get(
           endpoint.account.getbalance
-         );
+        );
 
-         setBalance(res.data.balance);
-       };
-       balance();
-     };
-     getData();
+        setBalance(res.data.balance);
+      };
+      balance();
+    };
+    getData();
     //  window.location.reload();
-   };
+  };
 
-   const submitChange = async () => {
-     // setopenSelect(true);
-     const res = await axiosRequest.post(
-endpoint.investment.reinvest,
-       { plan, amount },
+  const submitChange = async () => {
+    // setopenSelect(true);
+    const res = await axiosRequest.post(
+      endpoint.investment.reinvest,
+      { plan, amount },
 
-     );
+    );
 
-     if (res.status === 200) {
-       setOpenChange(false);
-       investmentCallback();
-       // toast.success('Correctly Incremented', 'Success');
-     } else {
-       // toast.error('Something went wrong', 'Error');
-     }
+    if (res.status === 200) {
+      setOpenChange(false);
+      investmentCallback();
+      // toast.success('Correctly Incremented', 'Success');
+    } else {
+      // toast.error('Something went wrong', 'Error');
+    }
 
-     const getData = async () => {
-       const investData = await axiosRequest.get(
-endpoint.investment.get
-       );
+    const getData = async () => {
+      const investData = await axiosRequest.get(
+        endpoint.investment.get
+      );
 
-       setInvest(investData.data);
+      setInvest(investData.data);
 
-       const balance = async () => {
-         const res = await axiosRequest.get(
+      const balance = async () => {
+        const res = await axiosRequest.get(
           endpoint.account.getbalance
-         );
+        );
 
-         setBalance(res.data.balance);
-       };
-       balance();
-     };
-     getData();
+        setBalance(res.data.balance);
+      };
+      balance();
+    };
+    getData();
     //  window.location.reload();
-   };
+  };
 
-   const [planSelected, setplanSelected] = useState();
-   useEffect(() => {
-     const getData = async () => {
-       const investData = await axiosRequest.get(
-endpoint.investment.get
-       );
+  const [planSelected, setplanSelected] = useState();
+  useEffect(() => {
+    const getData = async () => {
+      const investData = await axiosRequest.get(
+        endpoint.investment.get
+      );
 
-       setInvest(investData.data);
-       console.log(investData);
-     };
-     getData();
-   }, []);
+      setInvest(investData.data);
+
+    };
+    getData();
+  }, []);
 
   return (
     <>
@@ -182,10 +182,10 @@ endpoint.investment.get
 
       {
         invest === "" && (
-        <Button variant="contained" color="primary" onClick={handleClickOpen}>
-          Re-invest{/* {t("Increment")} */}
-        </Button>
-      )
+          <Button variant="contained" color="primary" onClick={handleClickOpen}>
+            Re-invest{/* {t("Increment")} */}
+          </Button>
+        )
       }
       {invest && (
         <Button variant="contained" color="primary" onClick={handleClickChange}>
@@ -519,12 +519,10 @@ endpoint.investment.get
                       style={{
                         marginBottom: "4px",
                         marginTop: "15px",
-                        backgroundColor: `${
-                          planSelected === "BIMONTHLY" ? " #1274E7" : ""
-                        }`,
-                        color: `${
-                          planSelected === "BIMONTHLY" ? " #fff" : "#1274E7"
-                        }`,
+                        backgroundColor: `${planSelected === "BIMONTHLY" ? " #1274E7" : ""
+                          }`,
+                        color: `${planSelected === "BIMONTHLY" ? " #fff" : "#1274E7"
+                          }`,
                         border: "1px solid rgba(0, 65, 193, 0.5)",
                       }}
                       variant="outlined"
@@ -596,12 +594,10 @@ endpoint.investment.get
                       style={{
                         marginBottom: "4px",
                         marginTop: "15px",
-                        backgroundColor: `${
-                          planSelected === "SEMIANNUAL" ? " #1274E7" : ""
-                        }`,
-                        color: `${
-                          planSelected === "SEMIANNUAL" ? " #fff" : "#1274E7"
-                        }`,
+                        backgroundColor: `${planSelected === "SEMIANNUAL" ? " #1274E7" : ""
+                          }`,
+                        color: `${planSelected === "SEMIANNUAL" ? " #fff" : "#1274E7"
+                          }`,
                         border: "1px solid rgba(0, 65, 193, 0.5)",
                       }}
                       variant="outlined"
@@ -721,12 +717,10 @@ endpoint.investment.get
                       style={{
                         marginBottom: "4px",
                         marginTop: "15px",
-                        backgroundColor: `${
-                          planSelected === "BIMONTHLY" ? " #1274E7" : ""
-                        }`,
-                        color: `${
-                          planSelected === "BIMONTHLY" ? " #fff" : "#1274E7"
-                        }`,
+                        backgroundColor: `${planSelected === "BIMONTHLY" ? " #1274E7" : ""
+                          }`,
+                        color: `${planSelected === "BIMONTHLY" ? " #fff" : "#1274E7"
+                          }`,
                         border: "1px solid rgba(0, 65, 193, 0.5)",
                       }}
                       variant="outlined"
@@ -798,12 +792,10 @@ endpoint.investment.get
                       style={{
                         marginBottom: "4px",
                         marginTop: "15px",
-                        backgroundColor: `${
-                          planSelected === "SEMIANNUAL" ? " #1274E7" : ""
-                        }`,
-                        color: `${
-                          planSelected === "SEMIANNUAL" ? " #fff" : "#1274E7"
-                        }`,
+                        backgroundColor: `${planSelected === "SEMIANNUAL" ? " #1274E7" : ""
+                          }`,
+                        color: `${planSelected === "SEMIANNUAL" ? " #fff" : "#1274E7"
+                          }`,
                         border: "1px solid rgba(0, 65, 193, 0.5)",
                       }}
                       variant="outlined"

@@ -9,9 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  Select,
+
   TextField,
   Typography,
 
@@ -19,7 +17,7 @@ import {
 } from '@material-ui/core';
 
 import ClearIcon from '@material-ui/icons/Clear';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+
 import DialogActions from '@material-ui/core/DialogActions';
 
 import { useAuth } from '../hooks/use-auth';
@@ -263,12 +261,12 @@ export default function Investment({
                   />{' '}
                   {t('I_agree_to_the')}{' '}
                   <span className="mytrm">
-                    <Link
-                      href="https://www.dealence.com/termini-e-condizioni/"
+                    <a
+                      href={"https://www.dealence.com/terminiecondizioni/"}
                       target="_blank"
                     >
                       {t('tr')}
-                    </Link>{' '}
+                    </a>{' '}
                   </span>{' '}
                 </div>
                 {/* <Button
@@ -379,12 +377,12 @@ export default function Investment({
                   />{' '}
                   {t('I_agree_to_the')}{' '}
                   <span className="mytrm">
-                    <Link
-                      href="https://www.dealence.com/termini-e-condizioni/"
+                    <a
+                      href={"https://www.dealence.com/terminiecondizioni/"}
                       target="_blank"
                     >
                       {t('tr')}
-                    </Link>{' '}
+                    </a>{' '}
                   </span>{' '}
                 </div>
                 {/* <Button

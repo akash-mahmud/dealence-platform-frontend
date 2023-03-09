@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {  CardCvcElement, CardExpiryElement, CardNumberElement,   useElements, useStripe } from '@stripe/react-stripe-js';
+import { CardCvcElement, CardExpiryElement, CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -24,33 +24,33 @@ import { axiosRequest } from '../http/axiosRequest';
 import { endpoint } from '../config/endpoints';
 
 function StripeCard({ balance, setstripeDialogue, setInvestBalance }) {
-    const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles((theme) => ({
+    strpfrm: {
+      padding: '3rem',
+      paddingTop: '0',
+    },
+    img: {
+      margin: ' 0 auto',
+    },
+    loader: {
+      width: '34%',
+    },
+    [theme.breakpoints.down('xs')]: {
       strpfrm: {
-        padding: '3rem',
-        paddingTop: '0',
+        padding: '0',
       },
       img: {
-        margin: ' 0 auto',
+        margin: 'unset',
       },
+    },
+    [theme.breakpoints.down('sm')]: {
       loader: {
-        width: '34%',
+        width: '53%',
       },
-      [theme.breakpoints.down('xs')]: {
-        strpfrm: {
-          padding: '0',
-        },
-        img: {
-          margin: 'unset',
-        },
-      },
-      [theme.breakpoints.down('sm')]: {
-        loader: {
-          width: '53%',
-        },
-      },
-      [theme.breakpoints.down('md')]: {},
-    }));
-      const classes = useStyles();
+    },
+    [theme.breakpoints.down('md')]: {},
+  }));
+  const classes = useStyles();
   const { t } = useTranslation();
   const [loadingFOrAfter, setLoadingFOrAfter] = useState(false);
   const stripe = useStripe();
@@ -70,10 +70,10 @@ function StripeCard({ balance, setstripeDialogue, setInvestBalance }) {
     window.location.reload()
   };
   const handleCloseDialog = () => {
-        window.location.reload();
- setstripeDialogue(false);
- setOpenDialogAfter(false);
- setsuccessFull(false);
+    window.location.reload();
+    setstripeDialogue(false);
+    setOpenDialogAfter(false);
+    setsuccessFull(false);
   };
 
   const handelSubmit = async (event) => {
@@ -91,27 +91,27 @@ function StripeCard({ balance, setstripeDialogue, setInvestBalance }) {
       const { id } = paymentMethod;
       try {
         const { data } = await axiosRequest.post(
-         endpoint.transaction.createPaymentIntent,
+          endpoint.transaction.createPaymentIntent,
           {
             id,
             amount: balance,
           },
-         
+
         );
 
         if (data.message === 'success') {
-      const getData = async () => {
-        const res = await axiosRequest.get(
-         endpoint.account.getbalance
-        );
+          const getData = async () => {
+            const res = await axiosRequest.get(
+              endpoint.account.getbalance
+            );
 
-        setInvestBalance(res.data.balance);
+            setInvestBalance(res.data.balance);
 
-        // credit;
-      };
+            // credit;
+          };
 
-      getData();
-        
+          getData();
+
           setsuccessFull(true);
           // NotificationManager.success(data.message);
         } else {
@@ -125,7 +125,7 @@ function StripeCard({ balance, setstripeDialogue, setInvestBalance }) {
         setstripeDialogue(false);
       }
     } else {
-      // console.log(error);
+      //
     }
   };
 

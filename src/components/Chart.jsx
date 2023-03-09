@@ -66,11 +66,11 @@ function createData(principal, semesters = 2) {
   const data = [{ euro: principal, date: formattedDate() }];
   const prevDate = new Date();
   let Data;
-   const db = principal;
+  const db = principal;
   for (let i = 0; i < semesters; i++) {
     prevDate.setMonth(prevDate.getMonth() + 6);
     let amount = data[i].euro + db * (1 * 0.3);
-     Data = round(principal,2);
+    Data = round(principal, 2);
 
     if (i >= semesters - 1) {
       data.push({
@@ -94,7 +94,7 @@ function createData(principal, semesters = 2) {
   //     const amount =
   //       data[data.length - 1].futureEuro +
   //       data[data.length - 1].futureEuro * (1 * 0.3);
- 
+
   //     data.push({
   //       futureEuro: round(amount, 2),
   //       date: formattedDate(prevDate),
@@ -103,20 +103,20 @@ function createData(principal, semesters = 2) {
 
   //=========================Compund interest logic end =====================//
 
-    for (let j = 0; j < extraSemesters; j++) {
-      prevDate.setMonth(prevDate.getMonth() + 6);
-     
-      // console.log(db * (1 * 0.3));
-      // console.log(data[data.length - 1].futureEuro);
-      const amount =
-        data[data.length - 1].futureEuro + db * (1 * 0.3);
-  // console.log(amount);
-  // console.log(round(amount, 2));
-      data.push({
-        futureEuro: round(amount, 2),
-        date: formattedDate(prevDate),
-      });
-    }
+  for (let j = 0; j < extraSemesters; j++) {
+    prevDate.setMonth(prevDate.getMonth() + 6);
+
+    //
+    //
+    const amount =
+      data[data.length - 1].futureEuro + db * (1 * 0.3);
+    //
+    //
+    data.push({
+      futureEuro: round(amount, 2),
+      date: formattedDate(prevDate),
+    });
+  }
   return data;
 }
 

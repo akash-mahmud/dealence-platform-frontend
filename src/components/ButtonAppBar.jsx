@@ -63,7 +63,7 @@ const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 
 export default function ButtonAppBar(props) {
-    const auth = useAuth();
+  const auth = useAuth();
   const useStyles = makeStyles((theme) => ({
     title: {
       flexGrow: 1,
@@ -150,7 +150,7 @@ export default function ButtonAppBar(props) {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
-      overflowX:'hidden'
+      overflowX: 'hidden'
     },
     paper: {
       padding: theme.spacing(2),
@@ -355,15 +355,15 @@ export default function ButtonAppBar(props) {
 
 
     setdepositAmmount(e.target.value);
-  
+
 
     if (e.target.value >= 500) {
       const { data } = await axiosRequest.post(
-       endpoint.transaction.crypto,
+        endpoint.transaction.crypto,
         {
           amount: e.target.value,
         },
-    
+
       );
 
       setCoinbaseCheckoutData(data);
@@ -403,12 +403,12 @@ export default function ButtonAppBar(props) {
         setNotificationsEnabled(newNotificationsStatus);
 
         if (newNotificationsStatus) {
-        
+
         } else {
 
         }
       } catch (error) {
-      
+
       }
     };
 
@@ -442,7 +442,7 @@ export default function ButtonAppBar(props) {
   const handleClickOpenDialog = () => {
     if (!auth.user.isActive) {
       toast.error(
-        t('Verify_your_account_before')+
+        t('Verify_your_account_before') +
         t('Unverified_account')
       );
 
@@ -455,20 +455,20 @@ export default function ButtonAppBar(props) {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-    const getData = useCallback(async () => {
-      const res = await axiosRequest.get(
-       endpoint.account.getbalance
-      );
+  const getData = useCallback(async () => {
+    const res = await axiosRequest.get(
+      endpoint.account.getbalance
+    );
 
-      setBalance(res.data.balance);
-      setcredit(res.data.credit);
-      // credit;
-    }, []); 
+    setBalance(res.data.balance);
+    setcredit(res.data.credit);
+    // credit;
+  }, []);
   useEffect(() => {
 
 
     getData();
-  },[getData]);
+  }, [getData]);
 
   let [sdk, setSdk] = useState(false);
 
@@ -489,7 +489,7 @@ export default function ButtonAppBar(props) {
   useEffect(() => {
     const getData = async () => {
       const res = await axiosRequest.get(
-       endpoint.account.getbalance
+        endpoint.account.getbalance
       );
 
       setcreditData(res.data.credit);
@@ -498,12 +498,12 @@ export default function ButtonAppBar(props) {
   }, []);
   const approveTrans = (data, actions) => {
     return actions.order.capture().then(function (details) {
-      console.log(details);
+
       axiosRequest
         .post(
-         endpoint.transaction.deposit,
+          endpoint.transaction.deposit,
           details,
-         
+
         )
         .then(function () {
           const balanceAdd = async () => {
@@ -517,10 +517,10 @@ export default function ButtonAppBar(props) {
           };
           balanceAdd();
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+        });
     });
-  };
-
+  }
   const [cryptoMessageByNetwork, setcryptoMessageByNetwork] = useState(
     'Minimum withdrawal is €25.00. Your withdrawal will have €8.00 subtracted from your remaining balance to cover the fee required to process the transaction.'
   );
@@ -547,7 +547,7 @@ export default function ButtonAppBar(props) {
   const withdrawHandleOpen = () => {
     if (!auth.user.isActive) {
       toast.error(
-        t('Verify_your_withdraw')+
+        t('Verify_your_withdraw') +
         t('Unverified_account')
       );
 
@@ -559,6 +559,9 @@ export default function ButtonAppBar(props) {
 
   const withdrawHandleClose = () => {
     setWithdrawModel(false);
+    setbuttonSelected(undefined);
+    setwithdrawEmail(undefined)
+    setwithdrawAmount(undefined)
   };
 
   // Handles drawer style for mobile and desktop
@@ -706,7 +709,7 @@ export default function ButtonAppBar(props) {
     const { data } = await axiosRequest.post(
       endpoint.transaction.cryptoWithdraw,
       { withdrawAmount, cryptoAddress, crypto, withdrawName, withdrawEmail },
-      
+
     );
     if (data === 'success') {
       setcryptoWithdrawModelSuccesfulText(true);
@@ -715,7 +718,7 @@ export default function ButtonAppBar(props) {
       setsuccessWindow(true);
       const getData = async () => {
         const res = await axiosRequest.get(
-         endpoint.account.getbalance
+          endpoint.account.getbalance
         );
 
         setBalance(() => res.data.balance);
@@ -725,7 +728,7 @@ export default function ButtonAppBar(props) {
     }
   };
 
-  const ibanWithdrawSuccess = () => {};
+  const ibanWithdrawSuccess = () => { };
   const ibanDataSendToServer = async (e) => {
     setwithdrawLoading(true);
     e.preventDefault();
@@ -751,7 +754,7 @@ export default function ButtonAppBar(props) {
       const getData = async () => {
         const res = await axiosRequest.get(
           endpoint.account.getbalance,
-        
+
         );
 
         setBalance(() => res.data.balance);
@@ -783,19 +786,19 @@ export default function ButtonAppBar(props) {
   const handelCryptoNetChange = (e) => {
     setcrypto(e.target.value);
   };
-const [failedCryptoDeposit, setfailedCryptoDeposit] = useState(false)
+  const [failedCryptoDeposit, setfailedCryptoDeposit] = useState(false)
   const depostByCrypto = async () => {
-      const  data  = await axiosRequest.post(
-        endpoint.transaction.cr,
-        {depositAmmount},
-       
-      );
-   
+    const data = await axiosRequest.post(
+      endpoint.transaction.cr,
+      { depositAmmount },
+
+    );
+
   }
 
   const cloSeModelCryptoDeposit = () => {
     setOpenDialog(false);
-setfailedCryptoDeposit(false);
+    setfailedCryptoDeposit(false);
   }
   return (
     <>
@@ -872,11 +875,10 @@ setfailedCryptoDeposit(false);
                   </span>
                   <span
                     style={{
-                      display: `${
-                        cryptoWithdrawModelSuccesfulText === true
+                      display: `${cryptoWithdrawModelSuccesfulText === true
                           ? 'none'
                           : 'block'
-                      }`,
+                        }`,
                       marginLeft: '20px',
                       textAlign: 'center',
                       fontSize: '15px',
@@ -887,11 +889,10 @@ setfailedCryptoDeposit(false);
                   </span>
                   <span
                     style={{
-                      display: `${
-                        cryptoWithdrawModelSuccesfulText === false
+                      display: `${cryptoWithdrawModelSuccesfulText === false
                           ? 'none'
                           : 'block'
-                      }`,
+                        }`,
                       marginLeft: '20px',
                       textAlign: 'center',
                       fontSize: '15px',
@@ -1128,7 +1129,7 @@ setfailedCryptoDeposit(false);
                           buttonSelected === 'crypto' ? '#1274E7' : '',
                       }}
                       checkoutId={coinbaseCheckoutData.id}
-                      onChargeSuccess={(data) => {}}
+                      onChargeSuccess={(data) => { }}
                       onChargeFailure={(data) => {
                         // setfailedCryptoDeposit(true);
                       }}
@@ -1137,7 +1138,7 @@ setfailedCryptoDeposit(false);
                         // setBalance;
                         const getData = async () => {
                           const res = await axiosRequest.get(
-                           endpoint.account.getbalance
+                            endpoint.account.getbalance
                           );
 
                           props.setBalance(res.data.balance);
@@ -1223,7 +1224,7 @@ setfailedCryptoDeposit(false);
                               buttonSelected === 'crypto' ? '#1274E7' : '',
                           }}
                           checkoutId={coinbaseCheckoutData.id}
-                          onChargeSuccess={(data) => {}}
+                          onChargeSuccess={(data) => { }}
                           onChargeFailure={(data) => {
                             // setfailedCryptoDeposit(true);
                           }}
@@ -1458,13 +1459,14 @@ setfailedCryptoDeposit(false);
                     }
                   }
 
-                  // onSubmit={handleSubmit}
+                // onSubmit={handleSubmit}
                 >
                   <label>{t('Your_Email')} </label>
                   <input
                     type="email"
                     placeholder="example@gmail.com"
                     name="email"
+                    value={withdrawEmail}
                     onChange={(e) => setwithdrawEmail(e.target.value)}
                   />
                   <label>{t('Ammount')}: </label>
@@ -1474,6 +1476,7 @@ setfailedCryptoDeposit(false);
                     }}
                     type="number"
                     name="ammount"
+                    value={withdrawAmount}
                     onChange={(e) => setwithdrawAmount(e.target.value)}
                   />
                   <p
@@ -1504,14 +1507,14 @@ setfailedCryptoDeposit(false);
                       backgroundColor:
                         buttonSelected === 'ebanWithdraw' ? '#1274E7' : '',
                     }}
-                    disabled={
-                      !withdrawEmail ||
-                      !withdrawAmount ||
-                      !creditData ||
+                  // disabled={
+                  //   !withdrawEmail ||
+                  //   // !withdrawAmount ||
+                  //   !creditData ||
 
-                      withdrawAmount > creditData
-                    
-                    }
+                  //   withdrawAmount > creditData
+
+                  // }
                   >
                     Iban
                   </Button>
@@ -1537,14 +1540,14 @@ setfailedCryptoDeposit(false);
                               ? '#1274E7'
                               : '',
                         }}
-                        disabled={
-                          !withdrawEmail ||
-                          !withdrawAmount ||
-                          !creditData  ||
+                      // disabled={
+                      //   !withdrawEmail ||
+                      //   !withdrawAmount ||
+                      //   !creditData  ||
 
-                          withdrawAmount > creditData
-                           
-                        }
+                      //   withdrawAmount > creditData
+
+                      // }
                       >
                         Crypto
                       </Button>
@@ -1562,9 +1565,8 @@ setfailedCryptoDeposit(false);
               !withdrawAmount ||
               creditData === 0 ||
               withdrawAmount < 0 ||
-              withdrawAmount > creditData
-                ? true
-                : false
+              withdrawAmount > creditData || !buttonSelected
+
             }
             onClick={withdrawWithMethod}
             color="primary"
@@ -1666,7 +1668,7 @@ setfailedCryptoDeposit(false);
               >
                 <form
                   style={{ paddingTop: '16px' }}
-                  // onSubmit={handleSubmit}
+                // onSubmit={handleSubmit}
                 >
                   <label>{t('Your_wallet_Address')}</label>
                   <div className="elements_withdraw">
@@ -1782,7 +1784,7 @@ setfailedCryptoDeposit(false);
                       //  paddingTop: '16px'
                     }
                   }
-                  // onSubmit={handleSubmit}
+                // onSubmit={handleSubmit}
                 >
                   <div>
                     <label>{t('Full_Name')}</label>
@@ -1886,7 +1888,8 @@ setfailedCryptoDeposit(false);
       <AppBar
         elevation={0}
         position="absolute"
-        color="white"
+        color="inherit"
+        // color="white"
         className={clsx(
           classes.appBar,
           auth.user && (openDrawer || !isSmallScreen) && classes.appBarShift
@@ -1925,7 +1928,7 @@ setfailedCryptoDeposit(false);
                     window.open('https://www.dealence.com', '_blank')
                   }
                   src={logo}
-                  // className={classes.logo}
+                // className={classes.logo}
                 />
               </div>
             </div>
@@ -1981,7 +1984,7 @@ setfailedCryptoDeposit(false);
                     className={clsx(
                       classes.notificationsBellIcon,
                       notificationsEnabled &&
-                        classes.notificationsBellIconEnabled
+                      classes.notificationsBellIconEnabled
                     )}
                   />
                 </IconButton>
@@ -2147,7 +2150,7 @@ setfailedCryptoDeposit(false);
                   className={clsx(
                     classes.drawerListItemIcon,
                     currentRouteName == 'Verification' &&
-                      classes.drawerListItemIconActive
+                    classes.drawerListItemIconActive
                   )}
                 >
                   <VerifiedUserIcon />
@@ -2188,7 +2191,7 @@ setfailedCryptoDeposit(false);
                 className={clsx(
                   classes.drawerListItemIcon,
                   currentRouteName == 'Dashboard' &&
-                    classes.drawerListItemIconActive
+                  classes.drawerListItemIconActive
                 )}
               >
                 <AppsIcon />
@@ -2235,7 +2238,7 @@ setfailedCryptoDeposit(false);
                 className={clsx(
                   classes.drawerListItemIcon,
                   currentRouteName == 'Our Activities' &&
-                    classes.drawerListItemIconActive
+                  classes.drawerListItemIconActive
                 )}
               >
                 <PieChart />
@@ -2252,7 +2255,7 @@ setfailedCryptoDeposit(false);
                 className={clsx(
                   classes.drawerListItemIcon,
                   currentRouteName == 'Settings' &&
-                    classes.drawerListItemIconActive
+                  classes.drawerListItemIconActive
                 )}
               >
                 <Settings />
@@ -2261,7 +2264,7 @@ setfailedCryptoDeposit(false);
             </ListItem>
 
 
-            
+
             <ListItem
               onClick={() =>
                 window.open('https://www.dealence.com/blog', '_blank')

@@ -72,16 +72,16 @@ const Investments = () => {
     if (!previous_date) {
       //  const date = formattedDate(new Date(auth.user.createdAt));
       const date = new Date(auth.user.createdAt);
-      const newDate =    formattedDate(date);
-      // console.log(newDate);
+      const newDate = formattedDate(date);
+      //
       localStorage.setItem('date', JSON.stringify(newDate));
-          const previous_date = localStorage.getItem('date');
-             setdate(JSON.parse(previous_date));
-    }else{
+      const previous_date = localStorage.getItem('date');
+      setdate(JSON.parse(previous_date));
+    } else {
       setdate(JSON.parse(previous_date));
     }
   }, [auth.user.createdAt]);
-  
+
   return (
     <main className={classes.content}>
       <div className={classes.appBarSpacer} />
@@ -163,14 +163,14 @@ const Investments = () => {
             </Grid>
           </Grid>
           <Button
-          onClick={()=> {
-                const newDate = formattedDate(new Date());
-                // console.log(newDate);
-                localStorage.setItem('date', JSON.stringify(newDate));
-                    const date = localStorage.getItem('date');
-                      setdate(JSON.parse(date));
+            onClick={() => {
+              const newDate = formattedDate(new Date());
+              //
+              localStorage.setItem('date', JSON.stringify(newDate));
+              const date = localStorage.getItem('date');
+              setdate(JSON.parse(date));
 
-          }}
+            }}
             variant="contained"
             color="primary"
             style={{ 'margin-top': '25px' }}

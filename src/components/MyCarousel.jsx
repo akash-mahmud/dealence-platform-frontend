@@ -3,6 +3,7 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import { useTranslation } from 'react-i18next';
+import {v4 as uuid} from 'uuid'
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 
@@ -66,7 +67,7 @@ function SwipeableTextMobileStepper({ handleClickOpen }) {
           enableMouseEvents
         >
           {tutorialSteps.map((step, index) => (
-            <div key={step.label}>
+            <div key={uuid()}>
               {Math.abs(activeStep - index) <= 2 ? (
                 <img
                   className={classes.img}

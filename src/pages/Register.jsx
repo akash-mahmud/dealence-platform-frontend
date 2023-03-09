@@ -21,7 +21,7 @@ import { OutlinedInput, Paper } from "@material-ui/core";
 import logo from '../logo.png';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import LanguageSelect from '../components/LanguageSelect'; 
+import LanguageSelect from '../components/LanguageSelect';
 import { useTranslation } from 'react-i18next';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -113,32 +113,32 @@ export default function SignUp() {
   const { t } = useTranslation();
   const history = useHistory();
   const auth = useAuth();
-   
-useEffect(() => {
-  // auth.user?
-  if (auth.user) {
-    <Redirect to="/" />;
-    history.push('/');
-  }
-}, [auth.user, history]);
+
+  useEffect(() => {
+    // auth.user?
+    if (auth.user) {
+      <Redirect to="/" />;
+      history.push('/');
+    }
+  }, [auth.user, history]);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-const [accept, setaccept] = useState(false)
+  const [accept, setaccept] = useState(false)
   const register = () => {
     axiosRequest.post(endpoint.user.register,
-  
-     {
+
+      {
         first_name: firstName,
         last_name: lastName,
         email: email,
         password: password,
         referrer_code: query.get('referral'),
       },
-     
-     
+
+
     ).then((res) => {
       if (res.data === 'success') {
         auth.signin(email, password, () => history.replace('/'));
@@ -150,36 +150,36 @@ const [accept, setaccept] = useState(false)
 
 
 
-   const [values, setValues] = React.useState({
+  const [values, setValues] = React.useState({
 
-     showPassword: false,
-   });
+    showPassword: false,
+  });
 
   //  const handleChange = (prop) => (event) => {
   //    setValues({ ...values, [prop]: event.target.value });
   //  };
 
-   const handleClickShowPassword = () => {
-     setValues({ ...values, showPassword: !values.showPassword });
-   };
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
 
-   const handleMouseDownPassword = (event) => {
-     event.preventDefault();
-   };
-     useEffect(() => {
-       const listener = (event) => {
-         if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-           console.log('Enter key was pressed. Run your function.');
-           event.preventDefault();
-           //  auth.signin(username, password, () => history.replace(from));
-           register();
-         }
-       };
-       document.addEventListener('keydown', listener);
-       return () => {
-         document.removeEventListener('keydown', listener);
-       };
-     }, [register]);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  useEffect(() => {
+    const listener = (event) => {
+      if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+
+        event.preventDefault();
+        //  auth.signin(username, password, () => history.replace(from));
+        register();
+      }
+    };
+    document.addEventListener('keydown', listener);
+    return () => {
+      document.removeEventListener('keydown', listener);
+    };
+  }, [register]);
   return (
     <main className={classes.content}>
       <Container
@@ -405,7 +405,7 @@ const [accept, setaccept] = useState(false)
                     {t('Remember_me')}
                   </div>
                   <Button
-                  
+
                     style={{
                       marginTop: '5',
                     }}
