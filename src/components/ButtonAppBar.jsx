@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
-import Chip from '@material-ui/core/Chip';
+
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
+
+import ApplicationAppbar from './App/menu/ApplicationAppbar'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import LanguageSelect from './LanguageSelect';
+
 import CoinbaseCommerceButton from 'react-coinbase-commerce';
 import 'react-coinbase-commerce/dist/coinbase-commerce-button.css';
 import DialogActions from '@material-ui/core/DialogActions';
 import ClearIcon from '@material-ui/icons/Clear';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
 import {
   Button,
   Container,
@@ -17,14 +18,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
-  Drawer,
-  List,
+
   TextField,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Select,
+
 } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -56,6 +52,10 @@ import EbanMethod from './EbanMethod';
 import { useTranslation } from 'react-i18next';
 import { axiosRequest } from '../http/axiosRequest';
 import { endpoint } from '../config/endpoints';
+import WithdrawModal from './App/withdraw/WithdrawModal';
+import Crypto from './App/withdraw/Crypto';
+import Iban from './App/withdraw/Iban';
+import AppDrawer from './App/menu/AppDrawer';
 
 // import {useTranslation} from "react-i18next";
 const drawerWidth = 240;
@@ -74,7 +74,7 @@ export default function ButtonAppBar(props) {
       maxHeight: 57,
       marginTop: 10,
       flexGrow: 1,
-      [theme.breakpoints.up('md')]: {
+      [theme?.breakpoints?.up('md')]: {
         display: 'none',
       },
     },
@@ -94,7 +94,7 @@ export default function ButtonAppBar(props) {
       marginBottom: '10px',
     },
     appBarLeftButtons: {
-      [theme.breakpoints.down('sm')]: {
+      [theme?.breakpoints?.down('sm')]: {
         display: 'none',
       },
     },
@@ -102,12 +102,12 @@ export default function ButtonAppBar(props) {
       marginRight: theme.spacing(1),
     },
     mobileDrawerItems: {
-      [theme.breakpoints.up('md')]: {
+      [theme?.breakpoints?.up('md')]: {
         display: 'none',
       },
     },
     toolbar: {
-      [theme.breakpoints.up('md')]: {
+      [theme?.breakpoints?.up('md')]: {
         paddingRight: 24, // keep right padding when drawer closed
       },
     },
@@ -119,7 +119,7 @@ export default function ButtonAppBar(props) {
       justifyContent: 'flex-end',
       padding: '0 8px',
       ...theme.mixins.toolbar,
-      [theme.breakpoints.up('md')]: {
+      [theme?.breakpoints?.up('md')]: {
         display: 'none',
       },
     },
@@ -132,7 +132,7 @@ export default function ButtonAppBar(props) {
       borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
     },
     appBarShift: {
-      [theme.breakpoints.up('sm')]: {
+      [theme?.breakpoints?.up('sm')]: {
         marginLeft: drawerWidth,
         width: `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create(['width', 'margin'], {
@@ -165,7 +165,7 @@ export default function ButtonAppBar(props) {
         duration: theme.transitions.duration.leavingScreen,
       }),
       width: theme.spacing(7),
-      [theme.breakpoints.up('sm')]: {
+      [theme?.breakpoints?.up('sm')]: {
         width: theme.spacing(9),
       },
     },
@@ -173,12 +173,12 @@ export default function ButtonAppBar(props) {
       display: 'none',
     },
     mobileMenuButton: {
-      [theme.breakpoints.up('md')]: {
+      [theme?.breakpoints?.up('md')]: {
         display: 'none',
       },
     },
     closeDrawerChevron: {
-      [theme.breakpoints.up('md')]: {
+      [theme?.breakpoints?.up('md')]: {
         display: 'none',
       },
     },
@@ -186,12 +186,12 @@ export default function ButtonAppBar(props) {
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(1),
       marginLeft: theme.spacing(3),
-      [theme.breakpoints.down('sm')]: {
+      [theme?.breakpoints?.down('sm')]: {
         display: 'none',
       },
     },
     routeName: {
-      [theme.breakpoints.down('sm')]: {
+      [theme?.breakpoints?.down('sm')]: {
         display: 'none',
       },
       // display: 'none',
@@ -199,7 +199,7 @@ export default function ButtonAppBar(props) {
     },
     drawerListItem: {
       marginTop: theme.spacing(2),
-      [theme.breakpoints.down('sm')]: {
+      [theme?.breakpoints?.down('sm')]: {
         marginTop: theme.spacing(0.5),
       },
     },
@@ -266,7 +266,7 @@ export default function ButtonAppBar(props) {
       paddingBottom: theme.spacing(2),
     },
     hdlogo: {
-      display: `${auth.user ? 'none' : 'unset'}`,
+      display: `${auth?.user ? 'none' : 'unset'}`,
     },
     payMthods: {
       display: 'unset',
@@ -289,7 +289,7 @@ export default function ButtonAppBar(props) {
     usr: {
       display: 'none',
     },
-    [theme.breakpoints.down('xs')]: {
+    [theme?.breakpoints?.down('xs')]: {
       usr: {
         display: 'flex',
       },
@@ -321,13 +321,13 @@ export default function ButtonAppBar(props) {
         height: '230px',
       },
     },
-    [theme.breakpoints.down('sm')]: {
+    [theme?.breakpoints?.down('sm')]: {
       hdlogo: {
         display: 'none',
       },
     },
 
-    [theme.breakpoints.down('md')]: {
+    [theme?.breakpoints?.down('md')]: {
 
       hdlogo: {
         display: 'none',
@@ -440,7 +440,7 @@ export default function ButtonAppBar(props) {
   const [withdrawEmail, setwithdrawEmail] = useState('');
   const [withdrawAmount, setwithdrawAmount] = useState();
   const handleClickOpenDialog = () => {
-    if (!auth.user.isActive) {
+    if (!auth?.user?.isActive) {
       toast.error(
         t('Verify_your_account_before') +
         t('Unverified_account')
@@ -545,7 +545,7 @@ export default function ButtonAppBar(props) {
   let [withdrawModel, setWithdrawModel] = useState(false);
 
   const withdrawHandleOpen = () => {
-    if (!auth.user.isActive) {
+    if (!auth?.user?.isActive) {
       toast.error(
         t('Verify_your_withdraw') +
         t('Unverified_account')
@@ -565,7 +565,7 @@ export default function ButtonAppBar(props) {
   };
 
   // Handles drawer style for mobile and desktop
-  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery((theme) => theme?.breakpoints?.down('sm'));
 
   const drawerProps = {
     variant: isSmallScreen ? 'temporary' : 'permanent',
@@ -876,8 +876,8 @@ export default function ButtonAppBar(props) {
                   <span
                     style={{
                       display: `${cryptoWithdrawModelSuccesfulText === true
-                          ? 'none'
-                          : 'block'
+                        ? 'none'
+                        : 'block'
                         }`,
                       marginLeft: '20px',
                       textAlign: 'center',
@@ -890,8 +890,8 @@ export default function ButtonAppBar(props) {
                   <span
                     style={{
                       display: `${cryptoWithdrawModelSuccesfulText === false
-                          ? 'none'
-                          : 'block'
+                        ? 'none'
+                        : 'block'
                         }`,
                       marginLeft: '20px',
                       textAlign: 'center',
@@ -1411,945 +1411,75 @@ export default function ButtonAppBar(props) {
         </DialogActions>
       </Dialog>
 
-      <Dialog
-        className={classes.strpdlgibn}
-        open={withdrawModel}
-        onClose={withdrawHandleClose}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle id="scroll-dialog-title">
-          {t('Withdraw')}
-          <ClearIcon
-            onClick={withdrawHandleClose}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: '40px',
-              /* height: 18px; */
-              position: 'absolute',
-              top: '18px',
-              right: '10px',
-              height: '27px',
-              color: '#0041C1',
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main" maxWidth="xs">
-              <div
-                className="eban"
-                style={{ maxWidth: '400px', margin: '0 auto' }}
-              >
-                <div
-                  className={clsx(classes.withdraw, 'ibnImgwithdrawPopup')}
-                  style={{}}
-                >
-                  <img
-                    className={clsx(classes.mywth)}
-                    alt=""
-                    src={'./image/Withdraw.png'}
-                  />
-                </div>
-                <form
-                  style={
-                    {
-                      // marginTop: '100px',
-                    }
-                  }
+      <WithdrawModal classes={classes}
+        withdrawModel={withdrawModel}
+        withdrawHandleClose={withdrawHandleClose}
+        withdrawEmail={withdrawEmail}
+        setwithdrawEmail={setwithdrawEmail}
+        withdrawAmount={withdrawAmount}
+        setwithdrawAmount={setwithdrawAmount}
+        ibanwithdraw={ibanwithdraw}
+        credit={props.credit}
+        buttonSelected={buttonSelected}
+        cryptowithdraw={cryptowithdraw}
+        depositAmmount={depositAmmount}
+        creditData={creditData}
+        withdrawWithMethod={withdrawWithMethod} />
 
-                // onSubmit={handleSubmit}
-                >
-                  <label>{t('Your_Email')} </label>
-                  <input
-                    type="email"
-                    placeholder="example@gmail.com"
-                    name="email"
-                    value={withdrawEmail}
-                    onChange={(e) => setwithdrawEmail(e.target.value)}
-                  />
-                  <label>{t('Ammount')}: </label>
-                  <input
-                    style={{
-                      marginBottom: '0',
-                    }}
-                    type="number"
-                    name="ammount"
-                    value={withdrawAmount}
-                    onChange={(e) => setwithdrawAmount(e.target.value)}
-                  />
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      color: '#aeacac',
-                      marginTop: '2px',
-                    }}
-                  >
-                    {t('Available_ammount')} €{props.credit}
-                  </p>
-                </form>
-                <p style={{ margin: '30px 0 9px 0' }}>
-                  {t('Select_your_payment')}
-                </p>
-                <div
-                  style={{
-                    marginBottom: '35px',
-                  }}
-                >
-                  <Button
-                    onClick={ibanwithdraw}
-                    color="primary"
-                    variant={'outlined'}
-                    style={{
-                      margin: ' 0 15px 0 0',
-                      color: buttonSelected === 'ebanWithdraw' ? '#fff' : '',
-                      backgroundColor:
-                        buttonSelected === 'ebanWithdraw' ? '#1274E7' : '',
-                    }}
-                  // disabled={
-                  //   !withdrawEmail ||
-                  //   // !withdrawAmount ||
-                  //   !creditData ||
+      <Crypto
+        classes={classes}
+        withDrawByCryptoDialogue={withDrawByCryptoDialogue}
+        withDrawCryptoModelHandelClode={withDrawCryptoModelHandelClode}
+        handelCryptoNetChange={handelCryptoNetChange}
+        crypto={crypto}
+        setcryptoAddress={setcryptoAddress}
+        cryptoDataSendToServer={cryptoDataSendToServer}
+        withdrawLoading={withdrawLoading}
+        cryptoAddress={cryptoAddress}
+      />
 
-                  //   withdrawAmount > creditData
+      <Iban classes={classes}
+        withdrawByIbanDialogue={withdrawByIbanDialogue}
+        withDrawIbanModelHandelClode={withDrawIbanModelHandelClode}
+        setwithdrawNameFull={setwithdrawNameFull}
+        setbankName={setbankName}
+        setiban={setiban}
+        setswift={setswift}
+        ibanDataSendToServer={ibanDataSendToServer}
 
-                  // }
-                  >
-                    Iban
-                  </Button>
+        iban={iban}
+        withdrawLoading={withdrawLoading}
+        withdrawEmail={withdrawEmail}
+        bankName={bankName}
+        swift={swift}
+        handelBackButtonWithdraw={handelBackButtonWithdraw} />
+      <ApplicationAppbar
+        isSmallScreen={isSmallScreen}
+        openDrawer={openDrawer}
+        classes={classes}
+        currentRouteName={currentRouteName}
 
-                  <div
-                    onClick={cryptowithdraw}
-                    style={{ display: 'inline-block' }}
-                  >
-                    <fieldset
-                      disabled={depositAmmount < 500 ? true : false}
-                      style={{ display: 'contents' }}
-                    >
-                      <Button
-                        color="primary"
-                        variant={'outlined'}
-                        style={{
-                          padding: '5px 30px',
-                          margin: ' 0 15px 0 0',
-                          color:
-                            buttonSelected === 'cryptoWithdraw' ? '#fff' : '',
-                          backgroundColor:
-                            buttonSelected === 'cryptoWithdraw'
-                              ? '#1274E7'
-                              : '',
-                        }}
-                      // disabled={
-                      //   !withdrawEmail ||
-                      //   !withdrawAmount ||
-                      //   !creditData  ||
-
-                      //   withdrawAmount > creditData
-
-                      // }
-                      >
-                        Crypto
-                      </Button>
-                    </fieldset>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            disabled={
-              !withdrawEmail ||
-              !withdrawAmount ||
-              creditData === 0 ||
-              withdrawAmount < 0 ||
-              withdrawAmount > creditData || !buttonSelected
-
-            }
-            onClick={withdrawWithMethod}
-            color="primary"
-          >
-            {t('Withdraw')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        className={classes.strpdlgibn}
-        open={withDrawByCryptoDialogue}
-        onClose={withDrawCryptoModelHandelClode}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle
-          style={{
-            margin: '12px',
-          }}
-          id="scroll-dialog-title"
-        >
-          <ClearIcon
-            onClick={withDrawCryptoModelHandelClode}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: '40px',
-              /* height: 18px; */
-              position: 'absolute',
-              top: '18px',
-              right: '10px',
-              height: '27px',
-              color: '#0041C1',
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main" maxWidth="xs">
-              <div
-                className="wiCr"
-                style={{
-                  width: '100%%',
-                  margin: ' 0 auto',
-                }}
-              >
-                <img
-                  className={classes.wiCr}
-                  alt=""
-                  src={'./image/Crypto.png'}
-                />
-              </div>
-              <p style={{ margin: '0px 0 9px 0' }}>
-                {t('Select_your')} Crypto:
-              </p>
-              <Select value={crypto} onChange={handelCryptoNetChange}>
-                <MenuItem value="Bitcoin">
-                  <img
-                    src="./bitcoin-btc-logo.svg"
-                    alt=""
-                    style={{
-                      height: '16px',
-                      width: '16px',
-                      marginRight: '5px',
-                    }}
-                  />
-                  Bitcoin
-                </MenuItem>
-                <MenuItem value="Etherium">
-                  <img
-                    src="./ethereum-eth-logo.svg"
-                    alt=""
-                    style={{
-                      height: '16px',
-                      width: '16px',
-                      marginRight: '5px',
-                    }}
-                  />
-                  Etherium
-                </MenuItem>
-                {/* <MenuItem value="Doge coin">Doge coin</MenuItem> */}
-                <MenuItem value="Lite coin">
-                  <img
-                    src="./litecoin-ltc-logo.svg"
-                    alt=""
-                    style={{
-                      height: '16px',
-                      width: '16px',
-                      marginRight: '5px',
-                    }}
-                  />{' '}
-                  Lite coin
-                </MenuItem>
-              </Select>
-              <div
-                className="eban"
-                style={{ maxWidth: '400px', margin: '0 auto' }}
-              >
-                <form
-                  style={{ paddingTop: '16px' }}
-                // onSubmit={handleSubmit}
-                >
-                  <label>{t('Your_wallet_Address')}</label>
-                  <div className="elements_withdraw">
-                    <input
-                      style={{
-                        marginBottom: '8px',
-                      }}
-                      type="text"
-                      name="name"
-                      onChange={(e) => setcryptoAddress(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      display: `${crypto !== 'Etherium' ? 'none' : ''}`,
-                    }}
-                  >
-                    {t('eth_text')}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      display: `${crypto !== 'Bitcoin' ? 'none' : ''}`,
-                    }}
-                  >
-                    {t('btc_text')}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      display: `${crypto !== 'Lite coin' ? 'none' : ''}`,
-                    }}
-                  >
-                    {t('ltc_text')}
-                  </p>
-                  <button
-                    className="pay-button"
-                    style={{
-                      fontWeight: '500',
-                    }}
-                    type="submit"
-                    disabled={
-                      !crypto || withdrawLoading === true || !cryptoAddress
-                    }
-                    onClick={cryptoDataSendToServer}
-                  >
-                    {t('Request_for_withdraw')}
-                  </button>
-                </form>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          style={{
-            marginBottom: '32px',
-          }}
-        >
-          {/* <Button onClick={withDrawCryptoModelHandelClode} color="primary">
-            {t('Close')}
-          </Button> */}
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        className={classes.strpdlgibn}
-        open={withdrawByIbanDialogue}
-        onClose={withDrawIbanModelHandelClode}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle
-          style={{
-            margin: '12px',
-          }}
-          id="scroll-dialog-title"
-        >
-          <ClearIcon
-            onClick={withDrawIbanModelHandelClode}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: '40px',
-              /* height: 18px; */
-              position: 'absolute',
-              top: '17px',
-              right: '10px',
-              height: '27px',
-              color: '#0041C1',
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main" maxWidth="xs">
-              <div
-                className="eban"
-                style={{ maxWidth: '400px', margin: '0 auto' }}
-              >
-                <div
-                  className={clsx(classes.img, 'ibnImgWithdraw')}
-                  style={{
-                    width: '74%',
-                  }}
-                >
-                  <img alt="" src={'./image/SEPA.png'} />
-                </div>
-                <form
-                  style={
-                    {
-                      //  paddingTop: '16px'
-                    }
-                  }
-                // onSubmit={handleSubmit}
-                >
-                  <div>
-                    <label>{t('Full_Name')}</label>
-                    <div className="elements_withdraw">
-                      <input
-                        type="text"
-                        name="name"
-                        style={{
-                          height: '50px',
-                        }}
-                        onChange={(e) => setwithdrawNameFull(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label>{t('Bank_Name')}</label>
-                    <div className="elements_withdraw">
-                      <input
-                        type="text"
-                        name="name"
-                        style={{
-                          height: '50px',
-                        }}
-                        onChange={(e) => setbankName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label>IBAN:</label>
-                    <div className="elements_withdraw">
-                      <input
-                        type="text"
-                        name="name"
-                        style={{
-                          height: '50px',
-                        }}
-                        onChange={(e) => setiban(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label>BIC/Swift:</label>
-                    <div className="elements_withdraw">
-                      <input
-                        type="text"
-                        name="name"
-                        style={{
-                          height: '50px',
-                        }}
-                        onChange={(e) => setswift(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                    }}
-                  >
-                    {t('our_bank')}
-                  </p>
-                  <button
-                    style={{
-                      fontWeight: '500',
-                      // borderRadius: '7px',
-                    }}
-                    className="pay-button"
-                    type="submit"
-                    disabled={
-                      !iban ||
-                      withdrawLoading === true ||
-                      !withdrawEmail ||
-                      !bankName ||
-                      !swift
-                    }
-                    onClick={ibanDataSendToServer}
-                  >
-                    {t('Request_for_withdraw')}
-                  </button>
-                </form>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          style={{
-            marginBottom: '41px',
-          }}
-        >
-          <Button
-            onClick={handelBackButtonWithdraw}
-            style={{ position: 'absolute', left: '0', top: '11px' }}
-            color="primary"
-          >
-            <ArrowBackIcon />
-          </Button>
-          {/* <Button onClick={withDrawIbanModelHandelClode} color="primary">
-            Close
-          </Button> */}
-        </DialogActions>
-      </Dialog>
-      <AppBar
-        elevation={0}
-        position="absolute"
-        color="inherit"
-        // color="white"
-        className={clsx(
-          classes.appBar,
-          auth.user && (openDrawer || !isSmallScreen) && classes.appBarShift
-        )}
-      >
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" className={classes.routeName}>
-            <span
-              style={{
-                display: `${auth.user ? '' : 'none'}`,
-              }}
-            >
-              {currentRouteName}
-            </span>
-
-            <div
-              className={classes.hdlogo}
-              style={{
-                width: '0%',
-                margin: ' 9px auto',
-              }}
-            >
-              <div
-                style={{
-                  marginLeft: '79%',
-                }}
-              >
-                <img
-                  style={{
-                    height: '55px',
-                    verticalAlign: 'middle',
-                    margin: ' 10px 0',
-                  }}
-                  alt=""
-                  onClick={() =>
-                    window.open('https://www.dealence.com', '_blank')
-                  }
-                  src={logo}
-                // className={classes.logo}
-                />
-              </div>
-            </div>
-          </Typography>
-          <Typography variant="h6" className={classes.title}>
-            <img
-              onClick={() => history.push('/')}
-              src={logo}
-              className={classes.logo}
-            />
-          </Typography>
-          {auth.user && (
-            <div>
-              <div className={classes.menuButton && classes.appBarLeftButtons}>
-                <Button
-                  variant="contained"
-                  // color="primary"
-                  style={{
-                    backgroundColor: '#1274E7',
-                    color: '#fff',
-                    borderRadius: '4px',
-                    border: 'none',
-                    boxShadow: 'none',
-                  }}
-                  onClick={() => handleClickOpenDialog()}
-                  className={classes.depositAppBarButton}
-                >
-                  {t('Deposit')}
-                </Button>
-                <Button
-                  style={{
-                    // rgba(102, 170, 255, 0.15)
-                    backgroundColor: 'rgba(102, 170, 255, 0.15)',
-                    color: '#1274E7',
-                    border: 'none',
-                    borderRadius: '4px',
-                  }}
-                  variant="outlined"
-                  // color="primary"
-                  onClick={() => withdrawHandleOpen()}
-                >
-                  {t('Withdraw')}
-                </Button>
-                <IconButton
-                  aria-label="email notifications bell"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleNotificationsChange}
-                  className={classes.notificationsBellButton}
-                >
-                  <Notifications
-                    className={clsx(
-                      classes.notificationsBellIcon,
-                      notificationsEnabled &&
-                      classes.notificationsBellIconEnabled
-                    )}
-                  />
-                </IconButton>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleMenu}
-                  className={classes.userButton}
-                >
-                  <Person className={classes.profileIcon} />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={openMenu}
-                  onClose={handleClose}
-                  classes={{
-                    list: classes.popupMenuList,
-                  }}
-                  className={classes.popupMenu}
-                >
-                  {/* border-radius: 4px; 
-                  background-color: #1274E7; */}
-                  <Container className={classes.popupMenuHeader}>
-                    <Typography
-                      variant="h6"
-                      align="left"
-                      className={classes.userPopupName}
-                    >
-                      {auth.user.first_name} {auth.user.last_name}
-                    </Typography>
-                    <Typography>{auth.user.email}</Typography>
-                    <div className={classes.userPopupBalanceContainer}>
-                      <Chip
-                        style={{
-                          borderRadius: '4px',
-                          backgroundColor: ' #1274E7',
-                        }}
-                        label={`${t('Available')}: €${balance} `}
-                        color="primary"
-                        className={classes.balanceChip}
-                      />
-                    </div>
-                  </Container>
-                  <Divider />
-                  <MenuItem
-                    onClick={() => {
-                      // handleClose()
-                      // setAnchorEl(null);
-                      auth.signout(() => {
-                        handleClose();
-                        history.push('/');
-                      });
-                    }}
-                    className={classes.popupMenuItem}
-                  >
-                    {t('Logout')}
-                  </MenuItem>
-                </Menu>
-              </div>
-              {auth.user && (
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="open drawer"
-                  onClick={handleDrawerOpen}
-                  className={clsx(
-                    classes.menuButton,
-                    classes.mobileMenuButton,
-                    'mymenumbl'
-                  )}
-                >
-                  <MenuIcon />
-                </IconButton>
-              )}
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-      {auth.user && (
-        <Drawer
-          {...drawerProps}
-          classes={{
-            paper: clsx(
-              classes.drawerPaper,
-              !(openDrawer || !isSmallScreen) && classes.drawerPaperClose
-            ),
-          }}
-          open={openDrawer || !isSmallScreen}
-        >
-          <div className={classes.drawerLogoContainer}>
-            <img
-              onClick={() => history.push('/')}
-              src={logo}
-              className={classes.drawerLogo}
-            />
-          </div>
-
-          <div className={classes.toolbarIcon}>
-            <IconButton
-              onClick={handleDrawerClose}
-              className={classes.closeDrawerChevron}
-            >
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <List>
-            <ListItem
-              button
-              // onClick={() => history.push('/')}
-              // onClick={handleMenu}
-              className={clsx(classes.drawerListItem, classes.usr)}
-            >
-              <ListItemIcon
-                className={clsx(
-                  classes.drawerListItemIcon
-                  // currentRouteName == 'Dashboard' &&
-                  //   classes.drawerListItemIconActive
-                )}
-              >
-                <Person />
-              </ListItemIcon>
-              <ListItemText
-                style={
-                  {
-                    // color: '#556B7F',
-                  }
-                }
-                primary={`${auth.user.first_name} ${auth.user.last_name}`}
-                className={classes.drawerListItemText}
-                secondary={
-                  <>
-                    <p
-                      style={{
-                        color: '#0041C1',
-                        fontSize: '12px',
-                      }}
-                    >
-                      {`${t('Available')}: €${balance} `}
-                    </p>
-                  </>
-                }
-              />
-            </ListItem>
-            {!auth.user.isActive && !auth.user.isDocumentUploaded && (
-              <ListItem
-                button
-                onClick={() => history.push('/verification')}
-                className={classes.drawerListItem}
-              >
-                <ListItemIcon
-                  className={clsx(
-                    classes.drawerListItemIcon,
-                    currentRouteName == 'Verification' &&
-                    classes.drawerListItemIconActive
-                  )}
-                >
-                  <VerifiedUserIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={t('Verify_Account')}
-                  secondary={
-                    <>
-                      <p
-                        style={{
-                          color: '#0041C1',
-                        }}
-                      >
-                        {t('Start_here')}
-                      </p>
-                    </>
-                  }
-                />
-              </ListItem>
-            )}
-            {/* <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              color="inherit"
-              onClick={handleMenu}
-              className={classes.userButton}
-            >
-              <Person className={classes.profileIcon} />
-            </IconButton> */}
-
-            <ListItem
-              button
-              onClick={() => history.push('/')}
-              className={classes.drawerListItem}
-            >
-              <ListItemIcon
-                className={clsx(
-                  classes.drawerListItemIcon,
-                  currentRouteName == 'Dashboard' &&
-                  classes.drawerListItemIconActive
-                )}
-              >
-                <AppsIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary="Dashboard"
-                className={classes.drawerListItemText}
-              />
-            </ListItem>
-
-            <ListItem
-              button
-              onClick={() => handleClickOpenDialog()}
-              className={clsx(
-                classes.mobileDrawerItems,
-                classes.drawerListItem
-              )}
-            >
-              <ListItemIcon className={classes.drawerListItemIcon}>
-                <ArrowDownwardOutlined />
-              </ListItemIcon>
-              <ListItemText primary={t('Deposit')} />
-            </ListItem>
-            <ListItem
-              button
-              onClick={() => withdrawHandleOpen()}
-              className={clsx(
-                classes.mobileDrawerItems,
-                classes.drawerListItem
-              )}
-            >
-              <ListItemIcon className={classes.drawerListItemIcon}>
-                <ArrowUpwardOutlined />
-              </ListItemIcon>
-              <ListItemText primary={t('Withdraw')} />
-            </ListItem>
-
-            <ListItem
-              button
-              onClick={() => history.push('/activities')}
-              className={clsx(classes.drawerListItem)}
-            >
-              <ListItemIcon
-                className={clsx(
-                  classes.drawerListItemIcon,
-                  currentRouteName == 'Our Activities' &&
-                  classes.drawerListItemIconActive
-                )}
-              >
-                <PieChart />
-              </ListItemIcon>
-              <ListItemText primary={t('Investments')} />
-            </ListItem>
-
-            <ListItem
-              button
-              onClick={() => history.push('/account')}
-              className={clsx(classes.drawerListItem)}
-            >
-              <ListItemIcon
-                className={clsx(
-                  classes.drawerListItemIcon,
-                  currentRouteName == 'Settings' &&
-                  classes.drawerListItemIconActive
-                )}
-              >
-                <Settings />
-              </ListItemIcon>
-              <ListItemText primary={t('Settings')} />
-            </ListItem>
-
-
-
-            <ListItem
-              onClick={() =>
-                window.open('https://www.dealence.com/blog', '_blank')
-              }
-              button
-              className={clsx(classes.drawerListItem)}
-            >
-              <ListItemIcon className={clsx(classes.drawerListItemIcon)}>
-                <RssFeed />
-              </ListItemIcon>
-              <ListItemText primary="Blog" />
-            </ListItem>
-            <ListItem
-              button
-              // onClick={() => history.push('/referral')}
-              className={classes.drawerListItem}
-            >
-              <ListItemIcon
-                className={clsx(
-                  classes.drawerListItemIcon
-                  // currentRouteName == 'Refer a Friend' &&
-                  //   classes.drawerListItemIconActive
-                )}
-              >
-                <PeopleIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={t('Refer_a_Friend')}
-                secondary={
-                  <>
-                    <p
-                      style={{
-                        color: '#0041C1',
-                      }}
-                    >
-                      {t('Coming_Soon')}
-                    </p>
-                  </>
-                }
-              />
-            </ListItem>
-
-            <ListItem button className={clsx(classes.drawerListItem)}>
-              <ListItemIcon className={clsx(classes.drawerListItemIcon)}>
-                <LiveHelp />
-              </ListItemIcon>
-              <ListItemText
-                onClick={liveMessage}
-                primary={t('Live_Chat_Support')}
-              />
-            </ListItem>
-            <ListItem
-              button
-              // onClick={() => history.push('/')}
-              // onClick={handleMenu}
-              onClick={() => auth.signout(() => history.push('/'))}
-              className={clsx(classes.drawerListItem, classes.usr)}
-            >
-              <ListItemIcon
-                className={clsx(
-                  classes.drawerListItemIcon
-                  // currentRouteName == 'Dashboard' &&
-                  //   classes.drawerListItemIconActive
-                )}
-              >
-                <ExitToAppIcon />
-              </ListItemIcon>
-              <ListItemText
-                style={{
-                  color: '#556B7F',
-                }}
-                primary={t('Logout')}
-                className={classes.drawerListItemText}
-              />
-            </ListItem>
-            <ListItem
-              style={{ marginLeft: '12px' }}
-              button
-              className={clsx(classes.drawerListItem)}
-            >
-              <LanguageSelect />
-            </ListItem>
-          </List>
-        </Drawer>
-      )}
+        withdrawHandleOpen={withdrawHandleOpen}
+        handleClickOpenDialog={handleClickOpenDialog}
+        handleNotificationsChange={handleNotificationsChange}
+        notificationsEnabled={notificationsEnabled}
+        handleMenu={handleMenu}
+        anchorEl={anchorEl}
+        openMenu={openMenu}
+        handleClose={handleClose}
+        handleDrawerOpen={handleDrawerOpen}
+        balance={balance}
+      />
+      <AppDrawer drawerProps={drawerProps}
+        classes={classes}
+        openDrawer={openDrawer}
+        isSmallScreen={isSmallScreen}
+        handleDrawerClose={handleDrawerClose}
+        balance={balance}
+        currentRouteName={currentRouteName}
+        handleClickOpenDialog={handleClickOpenDialog}
+        withdrawHandleOpen={withdrawHandleOpen}
+        liveMessage={liveMessage} />
     </>
   );
 }

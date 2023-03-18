@@ -299,6 +299,7 @@ export default function SignIn() {
                   </Link>
 
                   <Button
+                    id="login"
                     style={{
                       marginTop: '10px',
                     }}
@@ -307,7 +308,7 @@ export default function SignIn() {
                     color="primary"
                     onClick={() =>
                       auth.signin(username, password, () =>
-                        history.replace(from)
+                        history?.replace(from)
                       )
                     }
 

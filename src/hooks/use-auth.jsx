@@ -45,9 +45,9 @@ function useProvideAuth() {
         getUser()
     }, [])
 
-  const signin = (username, password, cb) => {
+  const signin = async (username, password, cb) => {
       try {
-        return axiosRequest.post(endpoint.user.login,
+        return await axiosRequest.post(endpoint.user.login,
 
           {
             username: username,

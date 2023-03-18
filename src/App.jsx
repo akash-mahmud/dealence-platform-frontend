@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       main: '#0041C1',

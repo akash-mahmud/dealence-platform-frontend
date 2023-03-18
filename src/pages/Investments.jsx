@@ -71,7 +71,7 @@ const Investments = () => {
     const previous_date = localStorage.getItem('date');
     if (!previous_date) {
       //  const date = formattedDate(new Date(auth.user.createdAt));
-      const date = new Date(auth.user.createdAt);
+      const date = new Date(auth?.user?.createdAt);
       const newDate = formattedDate(date);
       //
       localStorage.setItem('date', JSON.stringify(newDate));
@@ -80,7 +80,7 @@ const Investments = () => {
     } else {
       setdate(JSON.parse(previous_date));
     }
-  }, [auth.user.createdAt]);
+  }, [auth?.user?.createdAt]);
 
   return (
     <main className={classes.content}>

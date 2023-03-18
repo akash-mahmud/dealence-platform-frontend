@@ -162,7 +162,7 @@ export default function Chart() {
   };
 
   const handlePrincipalChange = (event) => {
-    const value = event.target.value.replace(/\+|-/gi, '');
+    const value = event.target.value?.replace(/\+|-/gi, '');
 
     if (value.length) {
       const number = parseFloat(value);
