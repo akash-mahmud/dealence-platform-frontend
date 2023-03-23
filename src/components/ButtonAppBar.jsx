@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
+import Skeleton from 'react-loading-skeleton'
 
 import ApplicationAppbar from './App/menu/ApplicationAppbar'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -351,27 +352,7 @@ export default function ButtonAppBar(props) {
 
   let [depositAmmount, setdepositAmmount] = useState(500);
 
-  const ammountHandler = async (e) => {
 
-
-    setdepositAmmount(e.target.value);
-
-
-    if (e.target.value >= 500) {
-      const { data } = await axiosRequest.post(
-        endpoint.transaction.crypto,
-        {
-          amount: e.target.value,
-        },
-
-      );
-
-      setCoinbaseCheckoutData(data);
-    }
-
-    // setOpenDialog(false);
-    // setCryptoDialogue(true);
-  };
 
   let [notificationsEnabled, setNotificationsEnabled] = React.useState(false);
   let [openDrawer, setOpenDrawer] = React.useState(window.innerWidth >= 960);
@@ -451,9 +432,12 @@ export default function ButtonAppBar(props) {
 
     setOpenDialog(true);
   };
-
+const [depositLoading, setdepositLoading] = useState(false)
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setDepositRequestSuccess(false)
+    setdepositLoading(false)
+    
   };
   const getData = useCallback(async () => {
     const res = await axiosRequest.get(
@@ -645,9 +629,7 @@ export default function ButtonAppBar(props) {
     setbuttonSelected('eban');
     // getPaymentEban();
   };
-  const cloSeModel = () => {
-    setOpenDialog(false);
-  };
+
 
   useEffect(() => {
     requestServerToCrypto();
@@ -727,7 +709,7 @@ export default function ButtonAppBar(props) {
       getData();
     }
   };
-
+  const [depositRequestSuccess, setDepositRequestSuccess] = useState(false)
   const ibanWithdrawSuccess = () => { };
   const ibanDataSendToServer = async (e) => {
     setwithdrawLoading(true);
@@ -765,16 +747,18 @@ export default function ButtonAppBar(props) {
   };
 
   const handeslDepost = async () => {
-    if (buttonSelected === 'card') {
-      getPayment();
-    } else if (buttonSelected === 'eban') {
-      //  setbuttonSelected('eban');
-      getPaymentEban();
-    } else {
-      return;
+    setdepositLoading(true)
+    try {
+    const {data} =  await axiosRequest.post(endpoint.transaction.deposit, {
+        amount: depositAmmount
+    })
+      if (data ==='success') {
+    setDepositRequestSuccess(true)
+  }
+    } catch (error) {
+      toast.error(error.message)
     }
-
-    // getPayment();
+    setdepositLoading(false)
   };
 
   const liveMessage = () => {
@@ -1010,406 +994,104 @@ export default function ButtonAppBar(props) {
         aria-describedby="scroll-dialog-description"
       >
         <DialogTitle id="scroll-dialog-title">
-          {t('Enter_the_amount')}
-          {/* <h1>{t('welcome.title')}</h1> */}
-          <ClearIcon
-            onClick={cloSeModel}
-            className="closeIcon"
-            style={{
+          {
+            depositLoading ? 'Proccessiong' : t('Enter_the_amount')
+          }
+       
+         
+          {
+            depositLoading ? <Skeleton /> : <ClearIcon
+              onClick={handleCloseDialog}
+              className="closeIcon"
+              style={{
               /* float: right; */ width: '40px',
-              /* height: 18px; */
-              position: 'absolute',
-              top: '17px',
-              right: '10px',
-              height: '27px',
-              color: '#0041C1',
-            }}
-          />
+                /* height: 18px; */
+                position: 'absolute',
+                top: '17px',
+                right: '10px',
+                height: '27px',
+                color: '#0041C1',
+              }}
+            />
+          }
+        
         </DialogTitle>
+
         <DialogContent dividers={true}>
           <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
             <Container component="main" maxWidth="xs">
-              <TextField
-                type="number"
-                id="outlined-basic"
-                label={t('Enter_the')}
-                variant="outlined"
-                onChange={ammountHandler}
-                value={depositAmmount}
-                name="balance"
-                style={{
-                  marginTop: '30px',
-                }}
-              />
-              <p
-                style={{
-                  fontSize: '13px',
-                  marginTop: '8px',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#0041C1',
-                  }}
-                >
-                  *
-                </span>
-                {t('Minimum_deposit')} €500
-              </p>
-              <p style={{ margin: '32px 0 9px 0' }}>
-                {t('Select_your_payment')}
-              </p>
-              {/* variant=
-              {` ${buttonSelected === 'card' ? 'contained' : 'outlined'}`} */}
-              {/* color: #0041C1; */}
-              <div
-                className={classes.payMthods}
-                style={{
-                  marginTop: '15px',
-                  marginBottom: '15px',
-                }}
-              >
-                <Button
-                  onClick={() => requestServerToStripe()}
-                  className="paybtns"
-                  color="primary"
-                  variant={'outlined'}
-                  style={{
-                    margin: ' 0 15px 0 0',
-                    color: buttonSelected === 'card' ? '#fff' : '',
-
-                    backgroundColor: buttonSelected === 'card' ? '#1274E7' : '',
-                  }}
-                  disabled={depositAmmount < 500 ? true : false}
-                >
-                  <i class="fa-solid fa-credit-card"></i>
-                  {t('card')}
-                </Button>
-                <Button
-                  onClick={() => requestServerToStripeEban()}
-                  className="paybtns"
-                  color="primary"
-                  variant={'outlined'}
-                  style={{
-                    margin: ' 0 15px 0 0',
-                    color: buttonSelected === 'eban' ? '#fff' : '',
-                    backgroundColor: buttonSelected === 'eban' ? '#1274E7' : '',
-                  }}
-                  disabled={depositAmmount < 500 ? true : false}
-                >
-                  <i class="fa-solid fa-building-columns"></i>
-                  Iban
-                </Button>
-                {/* <Button
-                onClick={requestServerToCrypto}
-                color="primary"
-                variant={'outlined'}
-                style={{
-                  margin: ' 0 15px 0 0',
-                  color: buttonSelected === 'crypto' ? '#fff' : '',
-                  backgroundColor: buttonSelected === 'crypto' ? '#0041C1' : '',
-                }}
-              > */}
-                <div
-                  onClick={() => requestServerToCrypto()}
-                  style={{ display: 'inline-block' }}
-                >
-                  <fieldset
-                    disabled={depositAmmount < 500 ? true : false}
-                    style={{ display: 'contents' }}
+              {
+                !depositRequestSuccess ? <> {
+                  depositLoading ? <Skeleton /> : <TextField
+                    type="number"
+                    id="outlined-basic"
+                    label={t('Enter_the')}
+                    variant="outlined"
+                    onChange={(e) => {
+                      setdepositAmmount(e.target.value)
+                    }}
+                    value={depositAmmount}
+                    name="balance"
+                    style={{
+                      marginTop: '30px',
+                    }}
+                  />
+                }
+             
+                  <p
+                    style={{
+                      fontSize: '13px',
+                      marginTop: '8px',
+                    }}
                   >
-                    <CoinbaseCommerceButton
-                      // onChargeSuccess={}
-                      styled
-                      style={{
-                        padding: '7px 30px',
-                        margin: ' 0 15px 0 0',
-                        color: buttonSelected === 'crypto' ? '#fff' : '',
-                        backgroundColor:
-                          buttonSelected === 'crypto' ? '#1274E7' : '',
-                      }}
-                      checkoutId={coinbaseCheckoutData.id}
-                      onChargeSuccess={(data) => { }}
-                      onChargeFailure={(data) => {
-                        // setfailedCryptoDeposit(true);
-                      }}
-                      onPaymentDetected={(data) => {
-                        depostByCrypto();
-                        // setBalance;
-                        const getData = async () => {
-                          const res = await axiosRequest.get(
-                            endpoint.account.getbalance
-                          );
-
-                          props.setBalance(res.data.balance);
-                          setcredit(res.data.credit);
-                          // credit;
-                        };
-
-                        getData();
-                        window.location.reload();
-                      }}
-                      onModalClosed={(data) => {
-                        // setfailedCryptoDeposit(true);
-                        // {event: 'charge_failed', code: 'CKAE3VJP', buttonId: '9dba92d2-35e7-4b56-96e6-650d76d0e48b'}
-                        // is a user close the model  without deposit the money
-                      }}
-                    >
-                      <i class="fa-solid fa-qrcode"></i>
-                      Crypto
-                    </CoinbaseCommerceButton>
-                  </fieldset>
-                </div>
-              </div>
-              <div className={classes.mthmbl}>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                  }}
-                >
-                  <li className={classes.moblmethod}>
-                    <Button
-                      onClick={requestServerToStripe}
-                      className="paybtns"
-                      color="primary"
-                      variant={'outlined'}
-                      style={{
-                        margin: ' 0 15px 0 0',
-                        color: buttonSelected === 'card' ? '#fff' : '',
-
-                        backgroundColor:
-                          buttonSelected === 'card' ? '#1274E7' : '',
-                      }}
-                      disabled={depositAmmount < 500 ? true : false}
-                    >
-                      <i class="fa-solid fa-credit-card"></i>
-                      {t('card')}
-                    </Button>
-                  </li>
-                  <li className={classes.moblmethod}>
-                    <Button
-                      onClick={requestServerToStripeEban}
-                      className="paybtns"
-                      color="primary"
-                      variant={'outlined'}
-                      style={{
-                        margin: ' 0 15px 0 0',
-                        color: buttonSelected === 'eban' ? '#fff' : '',
-                        backgroundColor:
-                          buttonSelected === 'eban' ? '#1274E7' : '',
-                      }}
-                      disabled={depositAmmount < 500 ? true : false}
-                    >
-                      <i class="fa-solid fa-building-columns"></i>
-                      Iban
-                    </Button>
-                  </li>
-                  <li className={classes.moblmethod}>
-                    <div
-                      onClick={requestServerToCrypto}
-                      style={{ display: 'inline-block' }}
-                    >
-                      <fieldset
-                        disabled={depositAmmount < 500 ? true : false}
-                        style={{ display: 'contents' }}
-                      >
-                        <CoinbaseCommerceButton
-                          // onChargeSuccess={}
-                          styled
+                    {
+                      depositLoading ? <Skeleton /> : <>
+                        <span
                           style={{
-                            padding: '7px 30px',
-                            margin: ' 0 15px 0 0',
-                            color: buttonSelected === 'crypto' ? '#fff' : '',
-                            backgroundColor:
-                              buttonSelected === 'crypto' ? '#1274E7' : '',
-                          }}
-                          checkoutId={coinbaseCheckoutData.id}
-                          onChargeSuccess={(data) => { }}
-                          onChargeFailure={(data) => {
-                            // setfailedCryptoDeposit(true);
-                          }}
-                          onPaymentDetected={(data) => {
-                            depostByCrypto();
-                            // setBalance;
-                            const getData = async () => {
-                              const res = await axiosRequest.get(
-                                endpoint.account.getbalance
-                              );
-
-                              props.setBalance(res.data.balance);
-                              setcredit(res.data.credit);
-                              // credit;
-                            };
-
-                            getData();
-                          }}
-                          onModalClosed={(data) => {
-                            // setfailedCryptoDeposit(true);
-                            // {event: 'charge_failed', code: 'CKAE3VJP', buttonId: '9dba92d2-35e7-4b56-96e6-650d76d0e48b'}
-                            // is a user close the model  without deposit the money
+                            color: '#0041C1',
                           }}
                         >
-                          <i class="fa-solid fa-qrcode"></i>
-                          Crypto
-                        </CoinbaseCommerceButton>
-                      </fieldset>
-                    </div>
-                  </li>
-                </ul>
+                          *
+                        </span>
+                        {t('Minimum_deposit')} €500
+                      </>
+                    }
+               
+                  </p>
+                
+                </> : <>
+                    <div>
+                      <p>Your deposit request has been send</p>
               </div>
-              <p
-                style={{
-                  fontSize: '13px',
-                  marginBottom: '30px',
-                  marginTop: '10px',
-                }}
+              </>
+              }
+            
+             
+             
+            
+            </Container>
+
+          </DialogContentText>
+        </DialogContent>
+        {
+          !depositRequestSuccess && <DialogActions>
+            {
+              
+              depositLoading ? <Skeleton /> : <Button
+                onClick={handeslDepost}
+                color="primary"
+                disabled={depositAmmount < 500 || depositLoading}
               >
-                <i class="fa-solid fa-lock"></i>{' '}
-                {t('Your_payment_info_is_secure_and_will_never_be_shared')}
-              </p>
-              {/* </Button> */}
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handeslDepost}
-            color="primary"
-            disabled={depositAmmount < 500 || !buttonSelected ? true : false}
-          >
-            {t('Deposit_Now')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        className={classes.strpdlgibn}
-        open={ebanDialogue}
-        onClose={stripeEbanHandleCloseDialog}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle
-          style={{
-            marginBottom: '21px',
-          }}
-          id="scroll-dialog-title"
-        >
-          <ClearIcon
-            onClick={stripeEbanHandleCloseDialog}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: '40px',
-              /* height: 18px; */
-              position: 'absolute',
-              top: '15px',
-              right: '10px',
-              height: '27px',
-              color: '#0041C1',
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main" maxWidth="xs">
-              <div className="  gateway">
-                <Elements balance={depositAmmount} stripe={stripePromise}>
-                  <EbanMethod
-                    setebanDialogue={setebanDialogue}
-                    balance={depositAmmount}
-                    setBalance={setBalance}
-                    setInvestBalance={props.setBalance}
-                  />
-                </Elements>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          style={{
-            marginBottom: '30px',
-          }}
-        >
-          <Button
-            onClick={handelBackButton}
-            style={{ position: 'absolute', left: '0', top: '11px' }}
-            color="primary"
-          >
-            <ArrowBackIcon />
-          </Button>
-        </DialogActions>
+                {t('Deposit_Now')}
+              </Button>
+              
+            }
+          
+          </DialogActions>
+        }
+     
       </Dialog>
 
-      <Dialog
-        className={classes.strpdlg}
-        open={stripeDialogue}
-        onClose={stripeHandleCloseDialog}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle
-          style={{
-            marginBottom: '34px',
-          }}
-          id="scroll-dialog-title"
-        >
-          <ClearIcon
-            onClick={stripeHandleCloseDialog}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: '40px',
-              /* height: 18px; */
-              position: 'absolute',
-              top: '17px',
-              right: '10px',
-              height: '27px',
-              color: '#0041C1',
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main">
-              <div className="  gateway">
-                {/* <PayPalButton
-                  amount={pay}
-                  options={{ currency: 'EUR' }}
-                  style={{ 'margin-top': '20px' }}
-                  onApprove={approveTrans}
-                /> */}
-
-                <Elements styled options={options} stripe={stripePromise}>
-                  <StripeCard
-                    setBalance={setBalance}
-                    setstripeDialogue={setstripeDialogue}
-                    balance={depositAmmount}
-                    setInvestBalance={props.setBalance}
-                  />
-                </Elements>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handelBackButton}
-            style={{ position: 'absolute', left: '10px', top: '17px' }}
-            color="primary"
-          >
-            <ArrowBackIcon />
-          </Button>
-          <Button
-            style={{
-              marginRight: '5px',
-            }}
-            onClick={stripeHandleCloseDialog}
-            color="primary"
-          >
-            {t('Cancel')}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       <WithdrawModal classes={classes}
         withdrawModel={withdrawModel}
@@ -1458,7 +1140,7 @@ export default function ButtonAppBar(props) {
         openDrawer={openDrawer}
         classes={classes}
         currentRouteName={currentRouteName}
-
+        contract={props.contract} setcontract={props.setcontract}
         withdrawHandleOpen={withdrawHandleOpen}
         handleClickOpenDialog={handleClickOpenDialog}
         handleNotificationsChange={handleNotificationsChange}

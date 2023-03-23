@@ -89,34 +89,34 @@ function createData(principal, semesters = 2) {
   }
 
   //=========================Compund interest logic =====================//
-  //   for (let j = 0; j < extraSemesters; j++) {
-  //     prevDate.setMonth(prevDate.getMonth() + 6);
-  //     const amount =
-  //       data[data.length - 1].futureEuro +
-  //       data[data.length - 1].futureEuro * (1 * 0.3);
+    for (let j = 0; j < extraSemesters; j++) {
+      prevDate.setMonth(prevDate.getMonth() + 6);
+      const amount =
+        data[data.length - 1].futureEuro +
+        data[data.length - 1].futureEuro * (1 * 0.3);
 
-  //     data.push({
-  //       futureEuro: round(amount, 2),
-  //       date: formattedDate(prevDate),
-  //     });
-  //   }
+      data.push({
+        futureEuro: round(amount, 2),
+        date: formattedDate(prevDate),
+      });
+    }
 
   //=========================Compund interest logic end =====================//
 
-  for (let j = 0; j < extraSemesters; j++) {
-    prevDate.setMonth(prevDate.getMonth() + 6);
+  // for (let j = 0; j < extraSemesters; j++) {
+  //   prevDate.setMonth(prevDate.getMonth() + 6);
 
-    //
-    //
-    const amount =
-      data[data.length - 1].futureEuro + db * (1 * 0.3);
-    //
-    //
-    data.push({
-      futureEuro: round(amount, 2),
-      date: formattedDate(prevDate),
-    });
-  }
+  //   //
+  //   //
+  //   const amount =
+  //     data[data.length - 1].futureEuro + db * (1 * 0.3);
+  //   //
+  //   //
+  //   data.push({
+  //     futureEuro: round(amount, 2),
+  //     date: formattedDate(prevDate),
+  //   });
+  // }
   return data;
 }
 
@@ -183,17 +183,46 @@ export default function Chart() {
 
     return '0';
   };
+  const dataTest = [
+    { name: 'Jan', investment: 4000 },
+    { name: 'Feb', investment: 7000 },
+    { name: 'Mar', investment: 3000 },
+    { name: 'Apr', investment: 9000 },
+    { name: 'May', investment: 6000 },
+    { name: 'Jun', investment: 8000 },
+    { name: 'Jul', investment: 10000 },
+    { name: 'Aug', investment: 5000 },
+    { name: 'Sep', investment: 7500 },
+    { name: 'Oct', investment: 8500 },
+    { name: 'Nov', investment: 4000 },
+    { name: 'Dec', investment: 9500 },
+
+
+
+
+
+  ];
 
   return (
     <React.Fragment>
-      <Title>{t('Compute_Future_Profits')}</Title>
-      {/* <Typography variant="body1">In {currentChartYear} years you will earn {profitLabel()} euros</Typography> */}
-      <Typography component="p" variant="h4">
-        &euro;{profitLabel()}
-      </Typography>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between'
+      }}>
+
+
+      <Title>
+        {t('Value_of_Balance_trend')}
+
+        </Title>
+        <span>
+          Coming soon!
+        </span>
+      </div>
+
       <ResponsiveContainer height={300}>
         <LineChart
-          data={data}
+          data={dataTest}
           margin={{
             top: 16,
             right: 16,
@@ -203,82 +232,24 @@ export default function Chart() {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
-            dataKey="date"
+            dataKey="name"
             stroke={theme.palette.text.secondary}
-            hide={true}
+           
           />
-          <YAxis stroke={theme.palette.text.secondary} hide={true} />
-          <Tooltip content={<CustomTooltip />} />
-          <Line
-            type="monotone"
-            dataKey="euro"
-            stroke={theme.palette.primary.main}
-            activeDot={{ r: 8 }}
-            strokeWidth={2}
+          <YAxis
+            stroke={theme.palette.text.secondary}
+          
           />
-          <Line
-            name="euro"
-            type="monotone"
-            dataKey="futureEuro"
-            stroke="rgba(0, 0, 0, 0.3)"
-            strokeDasharray="5"
-            strokeWidth={2}
+          <Tooltip
+            content={<CustomTooltip />}
           />
+
+          <Line type="monotone" dataKey="investment" stroke="#8884d8" activeDot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
-      <Container>
-        <Typography id="discrete-slider" gutterBottom>
-          {t('Years')}
-        </Typography>
-        <Slider
-          defaultValue={2}
-          aria-labelledby="discrete-slider"
-          valueLabelDisplay="auto"
-          step={1}
-          marks
-          min={1}
-          max={10}
-          onChange={(_, value) => {
-            setYears(value);
-
-            updateChart();
-          }}
-        />
-        <Typography id="discrete-slider" gutterBottom>
-          {t('Capital')}
-        </Typography>
-        <Grid container spacing={1}>
-          <Grid item xs={12}>
-            <TextField
-              inputProps={{
-                style: {
-                  fontSize: 14,
-                  height: 40,
-                  padding: '0 14px',
-                },
-              }}
-              defaultValue={principal}
-              id="outlined-basic"
-              variant="outlined"
-              onChange={handlePrincipalChange}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Button
-              className={classes.btbs}
-              variant="contained"
-              onClick={updateChart}
-              color="primary"
-              startIcon={<RefreshIcon />}
-              fullWidth
-            >
-              {t('Compute')}
-            </Button>
-          </Grid>
-        </Grid>
-      </Container>
+    
     </React.Fragment>
   );
 }
+
+//Show unlimited data using infinitive scroll and Line chart of recharts

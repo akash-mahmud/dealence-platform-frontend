@@ -213,5 +213,8 @@
   "Your_plan":"Your plan is now active",
 
   "Something":"Something went wrong",
-  "card":"Card"
+  "card":"Card",
+  "Value_of_Balance_trend":"Value of Balance trend",
+  "Payments_trend":"Payments trend"
+
 }

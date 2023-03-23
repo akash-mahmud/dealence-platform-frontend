@@ -10,7 +10,7 @@ import { withTranslation } from 'react-i18next';
 import Title from './Title';
 import { endpoint } from '../config/endpoints';
 import { axiosRequest } from '../http/axiosRequest';
-
+import ClipLoader from "react-spinners/ClipLoader";
 /**
  * I assume we need a function to bundle all the information
  * together and send it over to the page where this form is
@@ -68,7 +68,7 @@ class InformationForm extends React.Component {
   }
 
   handleSubmit() {
-         this.setState({ disbaled: true });
+      
         //  disbaled: false,
     if (this.state.idFront == null) {
       toast.error(
@@ -92,7 +92,7 @@ class InformationForm extends React.Component {
 
       return;
     }
-
+    this.setState({ disbaled: true });
     const updateUserInfo = async () => {
       const payload = {
         first_name: this.state.firstName,
@@ -128,6 +128,7 @@ class InformationForm extends React.Component {
           this.props.t('unable')+
           this.props.t('Error')
         );
+        this.setState({ disbaled: false });
       }
     };
 
@@ -361,7 +362,10 @@ class InformationForm extends React.Component {
                   color="primary"
                   disabled={this.state.disbaled}
                 >
-                  {t('Send')}
+                  {
+                    this.state.disbaled ? <ClipLoader /> : t('Send')
+                  }
+                
                 </Button>
               </Grid>
             </Grid>

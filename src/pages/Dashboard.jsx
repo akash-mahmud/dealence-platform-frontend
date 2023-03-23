@@ -17,6 +17,7 @@ import InvestmentList from "../components/InvestmentsList";
 import MyCausoulSecond from "../components/MyCausoulSecond";
 import { endpoint } from "../config/endpoints";
 import { axiosRequest } from "../http/axiosRequest";
+import TotalPaidChart from "../components/TotalPaidChart";
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: "100vh",
     overflow: "auto",
-    overflowX:'hidden'
+    overflowX: 'hidden'
   },
   container: {
     paddingTop: theme.spacing(3),
@@ -57,14 +58,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Dashboard = ({ getPayouts ,          setBalance,
-              setcredit,
-              setPayouts,
-              setInterest,
-              balance,
-              credit,
-              interest,
-              payouts }) => {
+const Dashboard = ({ getPayouts, setBalance,
+  setcredit,
+  setPayouts,
+  setInterest,
+  balance,
+  credit,
+  interest,
+  payouts }) => {
   const classes = useStyles();
   // const [balance, setBalance] = useState(0);
   // const [credit, setcredit] = useState(0);
@@ -76,13 +77,7 @@ const Dashboard = ({ getPayouts ,          setBalance,
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const [active, setActive] = useState(false);
 
-  // const [interest, setInterest] = useState(0.0);
-  // const [payouts, setPayouts] = useState({
-  //   day: '',
-  //   month: '',
-  //   week: '',
-  //   year: '',
-  // });
+
 
   // Investments list data
   const [pagesCount, setPagesCount] = useState(0);
@@ -94,22 +89,13 @@ const Dashboard = ({ getPayouts ,          setBalance,
     setCurrentPage(value - 1);
   };
 
-  // const getPayouts = async () => {
-  //   const res = await axiosRequest.get(`${process.env.REACT_APP_API_DATA}/account/balance`, {
-  //     withCredentials: true,
-  //   });
 
-  //   setBalance(res.data.balance);
-  //   setcredit(res.data.credit);
-  //   setPayouts(res.data.payouts);
-  //   setInterest(res.data.interestEarned);
-  // };
 
   const getIncrements = async () => {
     const res = await axiosRequest.get(
       endpoint.investment.list
     );
-  
+
     setPages(res.data.paginatedIncrements);
     setPagesCount(res.data.paginatedIncrements.length);
     setIncrements(res.data.paginatedIncrements[currentPage]);
@@ -141,20 +127,11 @@ const Dashboard = ({ getPayouts ,          setBalance,
   const [openSelect2, setopenSelect2] = useState(false);
   const handleClickOpen = () => {
 
-    // if (!auth.user.isActive) {
-    //   NotificationManager.error(
-    //     t('Verify_your_account_before'),
-    //     t('Unverified_account')
-    //   );
 
-    //   return;
-    // }
-
-    // setOpen(true);
     if (invest === '') {
       setopenSelect2(true);
     }
- 
+
     if (invest) {
       setPlan(invest.plan);
       // setOpenChange(true);
@@ -201,12 +178,10 @@ const Dashboard = ({ getPayouts ,          setBalance,
                 />
               </Paper>
             </Grid>
-            {/* Interest earned card */}
-            <Grid item xs={12} md={4} lg={4}>
-              <Paper className={fixedHeightPaper}>
-                <Interest interest={interest} payouts={payouts} />
-              </Paper>
-            </Grid>
+
+
+
+
 
             <Grid item xs={12} md={4} lg={4}>
               <Paper className={fixedHeightPaper}>
@@ -228,21 +203,25 @@ const Dashboard = ({ getPayouts ,          setBalance,
                 />
               </Paper>
             </Grid>
-
+            <Grid item xs={12} md={4} lg={4} >
+              <Paper className={fixedHeightPaper}>
+                <Transactions
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                />
+              </Paper>
+            </Grid>
             {/* Chart */}
-            <Grid item xs={12} md={8} lg={7}>
+            <Grid item xs={12} md={12} lg={12}>
               <Paper className={classes.paper}>
                 <Chart />
               </Paper>
             </Grid>
 
-            {/* Transactions */}
-            <Grid className="recentTable" item xs={12} md={4} lg={5}>
-              <Paper className={classes.paper} style={{ height: "100%" }}>
-                <Transactions
-                  transactions={transactions}
-                  setTransactions={setTransactions}
-                />
+            {/* Chart */}
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={classes.paper}>
+                <TotalPaidChart />
               </Paper>
             </Grid>
 

@@ -88,7 +88,17 @@ export default function WithdrawModal({
                     type="number"
                     name="ammount"
                     value={withdrawAmount}
-                    onChange={(e) => setwithdrawAmount(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        if (parseFloat(e.target.value) < creditData) {
+                          setwithdrawAmount(e.target.value)
+                        }
+                      } else {
+                        setwithdrawAmount(undefined)
+                      }
+                    
+                     
+                    }}
                   />
                   <p
                     style={{
@@ -130,40 +140,7 @@ export default function WithdrawModal({
                     Iban
                   </Button>
 
-                  <div
-                    onClick={cryptowithdraw}
-                    style={{ display: "inline-block" }}
-                  >
-                    <fieldset
-                      disabled={depositAmmount < 500 ? true : false}
-                      style={{ display: "contents" }}
-                    >
-                      <Button
-                        color="primary"
-                        variant={"outlined"}
-                        style={{
-                          padding: "5px 30px",
-                          margin: " 0 15px 0 0",
-                          color:
-                            buttonSelected === "cryptoWithdraw" ? "#fff" : "",
-                          backgroundColor:
-                            buttonSelected === "cryptoWithdraw"
-                              ? "#1274E7"
-                              : "",
-                        }}
-                        // disabled={
-                        //   !withdrawEmail ||
-                        //   !withdrawAmount ||
-                        //   !creditData  ||
-
-                        //   withdrawAmount > creditData
-
-                        // }
-                      >
-                        Crypto
-                      </Button>
-                    </fieldset>
-                  </div>
+              
                 </div>
               </div>
             </Container>
@@ -173,11 +150,10 @@ export default function WithdrawModal({
           <Button
             disabled={
               !withdrawEmail ||
-              !withdrawAmount ||
-              creditData === 0 ||
-              withdrawAmount < 0 ||
-              withdrawAmount > creditData ||
-              !buttonSelected
+              !withdrawAmount
+           
+        
+          
             }
             onClick={withdrawWithMethod}
             color="primary"

@@ -17,7 +17,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Investments from './pages/Investments';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from './config/api';
 import { axiosRequest } from './http/axiosRequest';
 import { endpoint } from './config/endpoints';
@@ -45,7 +45,9 @@ export const theme = createTheme({
 
 function App() {
 
+  const [contract, setcontract] = useState()
 
+  
   const classes = useStyles();
 
   const [balance, setBalance] = useState(0);
@@ -79,6 +81,8 @@ function App() {
           <div className={classes.root}>
             <CssBaseline />
             <ButtonAppBar
+              setcontract={setcontract}
+              contract={contract}
               getPayouts={getPayouts}
               setBalance={setBalance}
               setcredit={setcredit}

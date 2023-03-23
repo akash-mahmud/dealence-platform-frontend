@@ -1,21 +1,26 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
+import 'react-loading-skeleton/dist/skeleton.css'
 import './index.css';
 import App from './App';
 import './i18nextInit';
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-
+import { store } from './store'
+import { Provider } from 'react-redux'
 import reportWebVitals from './reportWebVitals';
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <Suspense fallback="...">
-      
-      <App />
-      <ToastContainer />
-    </Suspense>
+    <Provider store={store}>
+      <Suspense fallback="...">
+
+        <App />
+        <ToastContainer />
+      </Suspense>
+    </Provider>
+  
   </React.StrictMode>,
   document.getElementById('root')
 );
@@ -24,3 +29,7 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+
+// Create reducer, slicer  and store in redux toolkit for userLoginData
+

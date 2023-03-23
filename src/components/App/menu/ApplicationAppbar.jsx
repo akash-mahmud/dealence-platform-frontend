@@ -6,12 +6,14 @@ import {
   Button,
   Menu,
   Toolbar,
-
+  Select,
   MenuItem,
+
   IconButton,
   Typography,
   Container,
   Divider,
+  InputLabel,
 
 } from "@material-ui/core";
 import Person from "@material-ui/icons/Person";
@@ -26,7 +28,7 @@ export default function ApplicationAppbar({
   openDrawer,
   classes,
   currentRouteName,
-
+  contract, setcontract,
   withdrawHandleOpen,
   handleClickOpenDialog,
   handleNotificationsChange,
@@ -40,7 +42,10 @@ export default function ApplicationAppbar({
 }) {
   const auth = useAuth()
   const { t } = useTranslation();
-    const history = useHistory();
+  const history = useHistory();
+  const onchangeContract = async (contract) => {
+    setcontract(contract)
+  }
   return (
     <>
       <AppBar
@@ -98,9 +103,28 @@ export default function ApplicationAppbar({
               className={classes.logo}
             />
           </Typography>
+         
           {auth.user && (
+            <>
+            
+              <InputLabel id="select_contract" style={{
+               marginRight:'5px'
+             }}>Contract:</InputLabel>
             <div>
+             
               <div className={classes.menuButton && classes.appBarLeftButtons}>
+           
+                  <Select onChange={(e) => {
+                    onchangeContract(e.target.value)
+                  }} value={contract ? contract : auth?.user?.contracts?.split(',')[0]} style={{
+                    marginRight: '5px'
+                }}>
+                    {
+                      auth.user?.contracts?.split(',').map((contract) => <MenuItem value={contract}>
+                        {contract}</MenuItem>)
+               }
+                  
+                </Select>
                 <Button
                   variant="contained"
                   // color="primary"
@@ -186,17 +210,7 @@ export default function ApplicationAppbar({
                       {auth.user.first_name} {auth.user.last_name}
                     </Typography>
                     <Typography>{auth.user.email}</Typography>
-                    <div className={classes.userPopupBalanceContainer}>
-                      <Chip
-                        style={{
-                          borderRadius: "4px",
-                          backgroundColor: " #1274E7",
-                        }}
-                        label={`${t("Available")}: €${balance} `}
-                        color="primary"
-                        className={classes.balanceChip}
-                      />
-                    </div>
+                  
                   </Container>
                   <Divider />
                   <MenuItem
@@ -214,6 +228,7 @@ export default function ApplicationAppbar({
                   </MenuItem>
                 </Menu>
               </div>
+              
               {auth.user && (
                 <IconButton
                   edge="start"
@@ -230,6 +245,7 @@ export default function ApplicationAppbar({
                 </IconButton>
               )}
             </div>
+            </>
           )}
         </Toolbar>
       </AppBar>
