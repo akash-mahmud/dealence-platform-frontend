@@ -214,8 +214,10 @@
   "unable": "Impossibile salvare i dati, controllare i campi e riprovare.",
   "Plan_actived": "Piano attivato",
   "Your_plan": "Il tuo piano è attivo",
-    "Something":"Qualcosa è andato storto",
-  "card":"Carta"
+  "Something": "Qualcosa è andato storto",
+  "card": "Carta",
+  "Value_of_Balance_trend": "Andamento del valore del capitale",
+  "Payments_trend": "Andamento dei pagamenti ricevuti"
 }
 
 

@@ -28,6 +28,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import StartPageSlide from "../components/StartPageSlide";
 import { axiosRequest } from '../http/axiosRequest';
 import { endpoint } from '../config/endpoints';
+import { toast } from 'react-toastify';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: '0',
@@ -127,23 +128,31 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [accept, setaccept] = useState(false)
-  const register = () => {
-    axiosRequest.post(endpoint.user.register,
+  const register = async () => {
+    try {
+      const { data } = await axiosRequest.post(endpoint.user.register,
 
-      {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        password: password,
-        referrer_code: query.get('referral'),
-      },
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          password: password,
+          referrer_code: query.get('referral'),
+        },
 
 
-    ).then((res) => {
-      if (res.data === 'success') {
+      )
+      if (data === 'success') {
+        toast.success(data)
         auth.signin(email, password, () => history.replace('/'));
+
+      } else {
+        toast.error(data)
       }
-    });
+    } catch (error) {
+      toast.error(error.message)
+    }
+
   };
 
   //removeable
