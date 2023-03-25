@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { DatePicker, Space } from 'antd';
+
 
 import {
     LineChart,
@@ -199,6 +201,7 @@ export default function TotalPaidChart() {
         { name: 'Dec', investment: 9500 },
     ];
 
+    const [totalPaidYear, setTotalPaidYear] = useState();
     return (
         <React.Fragment>
             <div style={{
@@ -211,7 +214,7 @@ export default function TotalPaidChart() {
            
                 </Title>
                 <span>
-                    Coming soon!
+                    <DatePicker onChange={(date, dateString)=>setTotalPaidYear(dateString)} picker="year" />
                 </span>
             </div>
 

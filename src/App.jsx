@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Contract from "./pages/Contract";
 import ButtonAppBar from './components/ButtonAppBar';
 import PrivateRoute from './PrivateRoute';
-import { ProvideAuth } from './hooks/use-auth';
+import { ProvideAuth, useAuth } from './hooks/use-auth';
 
 
 import './App.css'
@@ -21,6 +21,8 @@ import { useEffect, useState } from 'react';
 import { api } from './config/api';
 import { axiosRequest } from './http/axiosRequest';
 import { endpoint } from './config/endpoints';
+import { useDispatch } from 'react-redux';
+import { setContract } from './store/slicers/global';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -74,6 +76,7 @@ function App() {
     setPayouts(res.data.payouts);
     setInterest(res.data.interestEarned);
   };
+
   return (
     <ThemeProvider theme={theme}>
       <ProvideAuth>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { DatePicker, Space } from 'antd';
+
 import {
   LineChart,
   Line,
@@ -216,7 +218,7 @@ export default function Chart() {
 
         </Title>
         <span>
-          Coming soon!
+          <DatePicker picker="year" />
         </span>
       </div>
 

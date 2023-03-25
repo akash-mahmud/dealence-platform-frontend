@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import AppBar from "@material-ui/core/AppBar";
 import clsx from 'clsx'
-import Chip from "@material-ui/core/Chip";
+import { useSelector, useDispatch } from 'react-redux'
+
 import {
   Button,
   Menu,
@@ -23,12 +24,12 @@ import { useAuth } from "../../../hooks/use-auth";
 import logo from "../../..//logo.png";
 import MenuIcon from "@material-ui/icons/Menu";
 import { useTranslation } from "react-i18next";
+import { setContract } from '../../../store/slicers/global';
 export default function ApplicationAppbar({
   isSmallScreen,
   openDrawer,
   classes,
   currentRouteName,
-  contract, setcontract,
   withdrawHandleOpen,
   handleClickOpenDialog,
   handleNotificationsChange,
@@ -43,9 +44,11 @@ export default function ApplicationAppbar({
   const auth = useAuth()
   const { t } = useTranslation();
   const history = useHistory();
-  const onchangeContract = async (contract) => {
-    setcontract(contract)
-  }
+
+  const dispatch = useDispatch();
+  const {contract} = useSelector((state) => state.global)
+  
+
   return (
     <>
       <AppBar
@@ -115,7 +118,7 @@ export default function ApplicationAppbar({
               <div className={classes.menuButton && classes.appBarLeftButtons}>
            
                   <Select onChange={(e) => {
-                    onchangeContract(e.target.value)
+                    dispatch(setContract(e.target.value))
                   }} value={contract ? contract : auth?.user?.contracts?.split(',')[0]} style={{
                     marginRight: '5px'
                 }}>
