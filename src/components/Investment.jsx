@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { endpoint } from '../config/endpoints';
 import { axiosRequest } from '../http/axiosRequest';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -159,7 +160,7 @@ export default function Investment({
         endpoint.investment.get,
       );
 
-      setInvest(investData.data);
+      // setInvest(investData.data);
 
       const balance = async () => {
         const res = await axiosRequest.get(
@@ -173,18 +174,21 @@ export default function Investment({
     getData();
         window.location.reload();
   };
-
+  const { contract } = useSelector((state) => state.global)
   const [planSelected, setplanSelected] = useState();
+
   useEffect(() => {
     const getData = async () => {
-      const investData = await axiosRequest.get(
-        endpoint.investment.get,
+      const {data} = await axiosRequest.post(
+        endpoint.contract.loadbalance, {
+          contract: contract ? contract : auth?.user?.contracts?.split(',')[0]
+        }
       );
 
-      setInvest(investData.data);
+      setInvest(data);
     };
     getData();
-  }, []);
+  }, [contract]);
 
   return (
     <>

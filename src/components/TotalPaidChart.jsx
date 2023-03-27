@@ -26,6 +26,10 @@ import {
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { round } from 'lodash'
+import { useSelector } from 'react-redux';
+import { endpoint } from '../config/endpoints';
+import { axiosRequest } from '../http/axiosRequest';
+import dayjs from 'dayjs';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -201,26 +205,50 @@ export default function TotalPaidChart() {
         { name: 'Dec', investment: 9500 },
     ];
 
-    const [totalPaidYear, setTotalPaidYear] = useState();
+    const [totalPaidYear, setTotalPaidYear] = useState(dayjs());
+    const [dataset, setdata] = useState([])
+    const { contract } = useSelector((state) => state.global)
+    const getData = async () => {
+        const { data } = await axiosRequest.post(endpoint.chart.getTotalPaid, {
+            year: totalPaidYear, contract
+        })
+        console.log(data);
+        const formattedData = data?.map((curElem) => ({
+
+            name: dayjs(curElem?.month).format('MMM'),
+            totalPaid: curElem?.totalPaid
+        }))
+
+        console.log(formattedData);
+        setdata(formattedData)
+    }
+
+    useEffect(() => {
+        getData()
+    }, [contract, totalPaidYear])
     return (
         <React.Fragment>
             <div style={{
-                    display: 'flex',
-    justifyContent: 'space-between'
+                display: 'flex',
+
+    // justifyContent: 'space-between'
             }}>
 
             <Title>
                 {t('Payments_trend')}
            
                 </Title>
-                <span>
-                    <DatePicker onChange={(date, dateString)=>setTotalPaidYear(dateString)} picker="year" />
+                <span style={{
+                    marginLeft: '20px'
+                }}>
+                  
+                    <DatePicker defaultValue={totalPaidYear} onChange={(date) => setTotalPaidYear(date)} picker="year" />
                 </span>
             </div>
 
             <ResponsiveContainer height={300}>
                 <LineChart
-                    data={dataTest}
+                    data={dataset}
                     margin={{
                         top: 16,
                         right: 16,
@@ -242,7 +270,7 @@ export default function TotalPaidChart() {
                         content={<CustomTooltip />}
                     />
 
-                    <Line type="monotone" dataKey="investment" stroke="#8884d8" activeDot={{ r: 8 }} />
+                    <Line type="monotone" dataKey="totalPaid" stroke="#8884d8" activeDot={{ r: 8 }} />
                 </LineChart>
             </ResponsiveContainer>
 

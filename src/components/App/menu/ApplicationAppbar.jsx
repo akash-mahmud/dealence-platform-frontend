@@ -112,7 +112,7 @@ export default function ApplicationAppbar({
             
               <InputLabel id="select_contract" style={{
                marginRight:'5px'
-             }}>Contract:</InputLabel>
+              }}>{t('Contract')}:</InputLabel>
             <div>
              
               <div className={classes.menuButton && classes.appBarLeftButtons}>

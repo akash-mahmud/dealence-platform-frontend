@@ -16,7 +16,7 @@ export default function WithdrawModal({
   buttonSelected,
   cryptowithdraw,
   depositAmmount,
-  creditData,
+
   withdrawWithMethod,
 }) {
   const { t } = useTranslation();
@@ -90,7 +90,7 @@ export default function WithdrawModal({
                     value={withdrawAmount}
                     onChange={(e) => {
                       if (e.target.value) {
-                        if (parseFloat(e.target.value) < creditData) {
+                        if (parseFloat(e.target.value) < credit) {
                           setwithdrawAmount(e.target.value)
                         }
                       } else {
@@ -107,7 +107,7 @@ export default function WithdrawModal({
                       marginTop: "2px",
                     }}
                   >
-                    {t("Available_ammount")} €{credit}
+                    {t("Available_ammount")} €{credit?.credit}
                   </p>
                 </form>
                 <p style={{ margin: "30px 0 9px 0" }}>
@@ -131,9 +131,9 @@ export default function WithdrawModal({
                     // disabled={
                     //   !withdrawEmail ||
                     //   // !withdrawAmount ||
-                    //   !creditData ||
+                    //   !credit ||
 
-                    //   withdrawAmount > creditData
+                    //   withdrawAmount > credit
 
                     // }
                   >

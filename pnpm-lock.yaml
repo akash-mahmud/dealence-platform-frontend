@@ -20,6 +20,7 @@ specifiers:
   cors: ^2.8.5
   cypress: ^12.7.0
   dateformat: ^5.0.2
+  dayjs: ^1.11.7
   dotenv: ^16.0.3
   express: ^4.18.2
   helmet: ^6.0.1
@@ -79,6 +80,7 @@ dependencies:
   compression: 1.7.4
   cors: 2.8.5
   dateformat: 5.0.3
+  dayjs: 1.11.7
   dotenv: 16.0.3
   express: 4.18.2
   helmet: 6.0.1
