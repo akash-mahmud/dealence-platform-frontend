@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Contract from "./pages/Contract";
 import ButtonAppBar from './components/ButtonAppBar';
 import PrivateRoute from './PrivateRoute';
-import { ProvideAuth } from './hooks/use-auth';
+import { ProvideAuth, useAuth } from './hooks/use-auth';
 
 
 import './App.css'
@@ -21,6 +21,8 @@ import { useEffect, useState } from 'react';
 import { api } from './config/api';
 import { axiosRequest } from './http/axiosRequest';
 import { endpoint } from './config/endpoints';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -45,7 +47,7 @@ export const theme = createTheme({
 
 function App() {
 
-  const [contract, setcontract] = useState()
+  const auth = useAuth()
 
   
   const classes = useStyles();
@@ -69,11 +71,25 @@ function App() {
       }
     );
 
-    setBalance(res.data.balance);
-    setcredit(res.data.credit);
-    setPayouts(res.data.payouts);
-    setInterest(res.data.interestEarned);
+    // setBalance(res.data.balance);
+    // setcredit(res.data.credit);
+    // setPayouts(res.data.payouts);
+    // setInterest(res.data.interestEarned);
   };
+
+  const { contract } = useSelector((state) => state.global)
+
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await axiosRequest.post(
+        endpoint.contract.loadAvailableCredit, { contract: contract ? contract : auth?.user?.contracts?.split(',')[0] }
+      );
+
+      setcredit(data);
+
+    };
+    getData();
+  }, [contract]);
   return (
     <ThemeProvider theme={theme}>
       <ProvideAuth>
@@ -81,7 +97,7 @@ function App() {
           <div className={classes.root}>
             <CssBaseline />
             <ButtonAppBar
-              setcontract={setcontract}
+       
               contract={contract}
               getPayouts={getPayouts}
               setBalance={setBalance}

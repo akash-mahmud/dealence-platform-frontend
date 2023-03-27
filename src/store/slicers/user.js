@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
 export const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -16,4 +17,5 @@ export const userSlice = createSlice({
     // Extra reducer comes here
   },
 });
+
 export const userSelector = (state) => state.user;

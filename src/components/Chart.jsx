@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { DatePicker, Space } from 'antd';
+import dayjs from 'dayjs';
+
 import {
   LineChart,
   Line,
@@ -23,7 +26,9 @@ import {
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { round } from 'lodash'
-
+import { axiosRequest } from '../http/axiosRequest';
+import { endpoint } from '../config/endpoints';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   tooltip: {
@@ -183,31 +188,34 @@ export default function Chart() {
 
     return '0';
   };
-  const dataTest = [
-    { name: 'Jan', investment: 4000 },
-    { name: 'Feb', investment: 7000 },
-    { name: 'Mar', investment: 3000 },
-    { name: 'Apr', investment: 9000 },
-    { name: 'May', investment: 6000 },
-    { name: 'Jun', investment: 8000 },
-    { name: 'Jul', investment: 10000 },
-    { name: 'Aug', investment: 5000 },
-    { name: 'Sep', investment: 7500 },
-    { name: 'Oct', investment: 8500 },
-    { name: 'Nov', investment: 4000 },
-    { name: 'Dec', investment: 9500 },
+  const [year, setyear] = useState(dayjs())
 
+  const [dataset, setdata] = useState([])
+  const { contract } = useSelector((state) => state.global)
+  const getData = async () => {
+    const { data } = await axiosRequest.post(endpoint.chart.getBalanceHistory, {
+      year: year, contract
+    })
+    const formattedData = data?.map((curElem) => ({
+    
+      name: dayjs(curElem?.month).format('MMM'),
+      investment: curElem?.investment
+    }))
 
-
-
-
-  ];
+    console.log(formattedData);
+    setdata(formattedData)
+  }
+  
+useEffect(() => {
+  getData()
+}, [contract, year])
 
   return (
     <React.Fragment>
       <div style={{
         display: 'flex',
-        justifyContent: 'space-between'
+        marginLeft: '20px'
+        // justifyContent: 'space-between'
       }}>
 
 
@@ -215,14 +223,18 @@ export default function Chart() {
         {t('Value_of_Balance_trend')}
 
         </Title>
-        <span>
-          Coming soon!
+        <span style={{
+          marginLeft: '20px'
+        }}>
+          <DatePicker defaultValue={year} onChange={(date) => {
+            setyear(date)
+          }} picker="year" />
         </span>
       </div>
 
       <ResponsiveContainer height={300}>
         <LineChart
-          data={dataTest}
+          data={dataset}
           margin={{
             top: 16,
             right: 16,

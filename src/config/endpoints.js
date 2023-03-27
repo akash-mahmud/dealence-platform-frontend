@@ -19,6 +19,7 @@ export const endpoint = {
     updatePersonalDetails: "/user/updatePersonalDetails",
     updateNotificationStatus: "/user/updateNotificationStatus",
   },
+
   transaction: {
     getList: "/transaction",
     deposit: "/transaction/deposit",
@@ -38,5 +39,13 @@ export const endpoint = {
   },
   paypal: {
     getConfig: "/config/paypal",
+  },
+  chart: {
+    getBalanceHistory: "/balanceUpdateLog/chart",
+    getTotalPaid: "/totalpaid/chart",
+  },
+  contract: {
+    loadbalance: "/contract/getbalance",
+    loadAvailableCredit: "/contract/getavailablecredit",
   },
 };

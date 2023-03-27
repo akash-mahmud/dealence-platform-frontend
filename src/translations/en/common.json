@@ -215,6 +215,7 @@
   "Something":"Something went wrong",
   "card":"Card",
   "Value_of_Balance_trend":"Value of Balance trend",
-  "Payments_trend":"Payments trend"
+  "Payments_trend":"Payments trend",
+  "Contract":"Contract"
 
 }

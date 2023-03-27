@@ -159,7 +159,7 @@ const Dashboard = ({ getPayouts, setBalance,
               <MyCausoulSecond />
             </Grid>
 
-            {/* Investment */}
+          
             <Grid item xs={12} md={4} lg={4}>
               <Paper className={fixedHeightPaper}>
                 <Investment

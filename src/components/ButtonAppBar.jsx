@@ -469,17 +469,8 @@ const [depositLoading, setdepositLoading] = useState(false)
 
     getUser();
   }, []);
-  const [creditData, setcreditData] = useState(0);
-  useEffect(() => {
-    const getData = async () => {
-      const res = await axiosRequest.get(
-        endpoint.account.getbalance
-      );
 
-      setcreditData(res.data.credit);
-    };
-    getData();
-  }, []);
+
   const approveTrans = (data, actions) => {
     return actions.order.capture().then(function (details) {
 
@@ -855,36 +846,11 @@ const [depositLoading, setdepositLoading] = useState(false)
                       fontWeight: '600',
                     }}
                   >
-                    {t('Withdrawal_request_sent_successfully')}
+                    “Gentile Cliente, la sua richiesta è stata presa in carico.
+                    La ringraziamo,
+                    Il Team di Dealence”
                   </span>
-                  <span
-                    style={{
-                      display: `${cryptoWithdrawModelSuccesfulText === true
-                        ? 'none'
-                        : 'block'
-                        }`,
-                      marginLeft: '20px',
-                      textAlign: 'center',
-                      fontSize: '15px',
-                      marginTop: '7px',
-                    }}
-                  >
-                    {t('your_withdraw_email')}
-                  </span>
-                  <span
-                    style={{
-                      display: `${cryptoWithdrawModelSuccesfulText === false
-                        ? 'none'
-                        : 'block'
-                        }`,
-                      marginLeft: '20px',
-                      textAlign: 'center',
-                      fontSize: '15px',
-                      marginTop: '7px',
-                    }}
-                  >
-                    {t('your_withdraw_email_crypto')}
-                  </span>
+
                 </div>
               </div>
 
@@ -995,7 +961,7 @@ const [depositLoading, setdepositLoading] = useState(false)
       >
         <DialogTitle id="scroll-dialog-title">
           {
-            depositLoading ? 'Proccessiong' : t('Enter_the_amount')
+            depositLoading ? 'Processing' : depositRequestSuccess?"success": t('Enter_the_amount')
           }
        
          
@@ -1061,7 +1027,9 @@ const [depositLoading, setdepositLoading] = useState(false)
                 
                 </> : <>
                     <div>
-                      <p>Your deposit request has been send</p>
+                      <p>“Gentile Cliente, la sua richiesta è stata presa in carico.
+                        La ringraziamo,
+                        Il Team di Dealence”</p>
               </div>
               </>
               }
@@ -1105,7 +1073,7 @@ const [depositLoading, setdepositLoading] = useState(false)
         buttonSelected={buttonSelected}
         cryptowithdraw={cryptowithdraw}
         depositAmmount={depositAmmount}
-        creditData={creditData}
+
         withdrawWithMethod={withdrawWithMethod} />
 
       <Crypto

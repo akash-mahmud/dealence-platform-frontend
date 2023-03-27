@@ -11,6 +11,8 @@ import { useAuth } from '../hooks/use-auth';
 import { Link } from 'react-router-dom';
 import { axiosRequest } from '../http/axiosRequest';
 import { endpoint } from '../config/endpoints';
+import { useSelector } from 'react-redux';
+import Skeleton from 'react-loading-skeleton';
 const useStyles = makeStyles({
   depositContext: {
     flex: 1,
@@ -33,148 +35,90 @@ export default function Deposits({
   openSelect,
   setopenSelect,
 }) {
+  const auth = useAuth()
   const { t } = useTranslation();
+  const { contract } = useSelector((state) => state.global)
   const classes = useStyles();
   useEffect(() => {
     const getData = async () => {
-      const res = await axiosRequest.get(
-        endpoint.account.getbalance
+      const { data } = await axiosRequest.post(
+        endpoint.contract.loadAvailableCredit, { contract: contract ? contract : auth?.user?.contracts?.split(',')[0] }
       );
 
-      setcredit(res.data.credit);
+      setcredit(data);
+
     };
     getData();
-  }, []);
+  }, [contract]);
 
 
 
-  const auth = useAuth();
+
+
 
   const [amount, setAmount] = useState("");
   const [open, setOpen] = useState(false);
   const [openChange, setOpenChange] = useState(false);
 
-  const selectClose2 = () => {
-    setopenSelect2(false);
-  };
+
   const handleClickOpen = () => {
     setopenSelect2(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
 
-  const [accept, setaccept] = useState(false);
 
-  const selectClose = () => {
-    setopenSelect(false);
-  };
+
 
   const handleClickChange = () => {
     setPlan(invest.plan);
     // setOpenChange(true);
     setopenSelect(true);
   };
+  const [depositLoading, setdepositLoading] = useState(false)
+  let [depositAmmount, setdepositAmmount] = useState();
+  const [depositRequestSuccess, setDepositRequestSuccess] = useState(false)
+  let [openDialog, setOpenDialog] = useState(false);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setDepositRequestSuccess(false)
+    setdepositLoading(false)
 
-  const handleCloseChange = () => {
-    setOpenChange(false);
   };
 
 
-  const submitHandle = async () => {
-    const res = await axiosRequest.post(
-      endpoint.investment.reinvest,
-      { plan, amount },
+  const handeslDepost = async () => {
+    setdepositLoading(true)
+    try {
+      const { data } = await axiosRequest.post(endpoint.investment.reinvest, {
+        amount: depositAmmount,
+        contract
+      })
+      if (data === 'success') {
+        setDepositRequestSuccess(true)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+    setdepositLoading(false)
+  };
 
-    );
+  const handleClickOpenDialog = () => {
+    if (!auth?.user?.isActive) {
+      toast.error(
+        t('Verify_your_account_before') +
+        t('Unverified_account')
+      );
 
-    if (res.data.message === "success") {
-      setOpen(false);
-      toast.success(`${t("Your_plan")} ${t("Plan_actived")}`);
-      investmentCallback();
-    } else {
-      toast.error(`${t("Something")} ${t("Error")}`);
+      return;
     }
 
-    const getData = async () => {
-
-      const investData = await axiosRequest.get(
-        endpoint.investment.get
-      );
-
-      setInvest(investData.data);
-      //This line can also work. But it is  not actual solution and it also refresh the page
-
-      // window.location.reload();
-
-      const balance = async () => {
-        const res = await axiosRequest.get(
-          endpoint.account.getbalance
-        );
-
-        setBalance(res.data.balance);
-      };
-      balance();
-    };
-    getData();
-    //  window.location.reload();
+    setOpenDialog(true);
   };
-
-  const submitChange = async () => {
-    // setopenSelect(true);
-    const res = await axiosRequest.post(
-      endpoint.investment.reinvest,
-      { plan, amount },
-
-    );
-
-    if (res.status === 200) {
-      setOpenChange(false);
-      investmentCallback();
-      // toast.success('Correctly Incremented', 'Success');
-    } else {
-      // toast.error('Something went wrong', 'Error');
-    }
-
-    const getData = async () => {
-      const investData = await axiosRequest.get(
-        endpoint.investment.get
-      );
-
-      setInvest(investData.data);
-
-      const balance = async () => {
-        const res = await axiosRequest.get(
-          endpoint.account.getbalance
-        );
-
-        setBalance(res.data.balance);
-      };
-      balance();
-    };
-    getData();
-    //  window.location.reload();
-  };
-
-  const [planSelected, setplanSelected] = useState();
-  useEffect(() => {
-    const getData = async () => {
-      const investData = await axiosRequest.get(
-        endpoint.investment.get
-      );
-
-      setInvest(investData.data);
-
-    };
-    getData();
-  }, []);
-
   return (
     <>
       <Title>{t("Available_Credit")}</Title>
       <Typography component="p" variant="h4">
-        &euro;{credit}
+        &euro;{credit?.credit? credit?.credit : 0}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
         {t("data_on")} {new Date(Date.now()).toDateString()}
@@ -182,644 +126,123 @@ export default function Deposits({
 
       {
         invest === "" && (
-          <Button variant="contained" color="primary" onClick={handleClickOpen}>
+          <Button variant="contained" color="primary" onClick={() => handleClickOpenDialog()}>
             Re-invest{/* {t("Increment")} */}
           </Button>
         )
       }
       {invest && (
-        <Button variant="contained" color="primary" onClick={handleClickChange}>
+        <Button variant="contained" color="primary" onClick={() => handleClickOpenDialog()}>
           Re-invest{/* {t("Increment")} */}
         </Button>
       )}
 
-      {/* dialogues */}
-
-      {/* Invest Dialog*/}
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={openDialog}
+        onClose={handleCloseDialog}
         scroll="paper"
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
         <DialogTitle id="scroll-dialog-title">
-          {" "}
-          {t("Insert_an_ammount")}{" "}
-          <ClearIcon
-            onClick={handleClose}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: "40px",
-              /* height: 18px; */
-              position: "absolute",
-              top: "17px",
-              right: "10px",
-              height: "27px",
-              color: "#0041C1",
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main" maxWidth="xs">
-              <div style={{ marginTop: "25px", marginBottom: "25px" }}>
-                <TextField
-                  style={{
-                    "margin-bottom": "7px",
-                    "min-width": " 230px",
-                    marginLeft: "3.2%",
-                    width: " 85%",
-                  }}
-                  type="number"
-                  id="outlined-basic"
-                  label={t("Amount")}
-                  variant="outlined"
-                  name="balance"
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-                <p
-                  style={{
-                    marginLeft: "3.5%",
-                    textTransform: "capitalize",
-                    marginTop: "7px",
-                  }}
-                >
-                  {/* {t("Available")} */} Available credits
-                  : €{credit}
-                </p>
-                <p
-                  style={{
-                    marginLeft: "3.5%",
-                  }}
-                >
-                  {t("The_amount_must")}
-                </p>
-                <div
-                  style={{
-                    marginLeft: "4px",
-                    marginTop: "7px",
-                  }}
-                >
-                  <Checkbox
-                    color="primary"
-                    checked={accept}
-                    onChange={(e) => setaccept(e.target.checked)}
-                    inputProps={{ "aria-label": "secondary checkbox" }}
-                  />{" "}
-                  {t("I_agree_to_the")}{" "}
-                  <span className="mytrm">
-                    <Link
-                      href="https://www.dealence.com/termini-e-condizioni/"
-                      target="_blank"
-                    >
-                      {t("tr")}
-                    </Link>{" "}
-                  </span>{" "}
-                </div>
-                {/* <Button
-                  style={{
-                    display: 'block', 
-                  }}
-                  type="submit"
-                  onClick={submitChange}
-                  variant="contained"
-                  color="primary"
-                >
-                  Increment
-                </Button> */}
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            type="submit"
-            onClick={submitHandle}
-            // variant="contained"
-            color="primary"
-            disabled={
-              !amount ||
-              !accept ||
-              credit < 500 ||
-              amount < 500 ||
-              amount % 500 !== 0
-            }
-          >
-            {t("Confirm")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          {
+            depositLoading ? 'Processing' : depositRequestSuccess ? "success" : t('Enter_the_amount')
+          }
 
-      {/* Increment Dialog*/}
 
-      <Dialog
-        open={openChange}
-        onClose={handleCloseChange}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle id="scroll-dialog-title">
-          {t("Insert_an_ammount")}{" "}
-          <ClearIcon
-            onClick={handleCloseChange}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: "40px",
-              /* height: 18px; */
-              position: "absolute",
-              top: "17px",
-              right: "10px",
-              height: "27px",
-              color: "#0041C1",
-            }}
-          />
+          {
+            depositLoading ? <Skeleton /> : <ClearIcon
+              onClick={handleCloseDialog}
+              className="closeIcon"
+              style={{
+              /* float: right; */ width: '40px',
+                /* height: 18px; */
+                position: 'absolute',
+                top: '17px',
+                right: '10px',
+                height: '27px',
+                color: '#0041C1',
+              }}
+            />
+          }
+
         </DialogTitle>
 
         <DialogContent dividers={true}>
           <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
             <Container component="main" maxWidth="xs">
-              <div style={{ marginTop: "25px", marginBottom: "25px" }}>
-                <TextField
-                  style={{
-                    "margin-bottom": "7px",
-                    "min-width": " 230px",
-                    marginLeft: "3.2%",
-                    width: " 85%",
-                  }}
-                  type="number"
-                  id="outlined-basic"
-                  label={t("Amount")}
-                  variant="outlined"
-                  name="balance"
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-                <p
-                  style={{
-                    marginLeft: "3.5%",
-                    textTransform: "capitalize",
-                    marginTop: "7px",
-                  }}
-                >
-                  {/* {t("Available")} */}
-                  Available credits: €{credit}
-                </p>
-                <p
-                  style={{
-                    marginLeft: "3.5%",
-                    marginTop: "7px",
-                  }}
-                >
-                  {t("The_amount_must")}
-                </p>
-                <div
-                  style={{
-                    marginLeft: "4px",
-                  }}
-                >
-                  <Checkbox
-                    color="primary"
-                    checked={accept}
-                    onChange={(e) => setaccept(e.target.checked)}
-                    inputProps={{ "aria-label": "secondary checkbox" }}
-                  />{" "}
-                  {t("I_agree_to_the")}{" "}
-                  <span className="mytrm">
-                    <Link
-                      href="https://www.dealence.com/termini-e-condizioni/"
-                      target="_blank"
-                    >
-                      {t("tr")}
-                    </Link>{" "}
-                  </span>{" "}
-                </div>
-                {/* <Button
-                  style={{
-                    display: 'block', 
-                  }}
-                  type="submit"
-                  onClick={submitChange}
-                  variant="contained"
-                  color="primary"
-                >
-                  Increment
-                </Button> */}
-              </div>
+              {
+                !depositRequestSuccess ? <> {
+                  depositLoading ? <Skeleton /> : <TextField
+                    type="number"
+                    id="outlined-basic"
+                    label={t('Enter_the')}
+                    variant="outlined"
+                    onChange={(e) => {
+                      setdepositAmmount(e.target.value)
+                    }}
+                    value={depositAmmount}
+                    name="balance"
+                    style={{
+                      marginTop: '30px',
+                    }}
+                  />
+                }
+
+                  <p
+                    style={{
+                      fontSize: '13px',
+                      marginTop: '8px',
+                    }}
+                  >
+                    {
+                      depositLoading ? <Skeleton /> : <>
+                        {/* <span
+                          style={{
+                            color: '#0041C1',
+                          }}
+                        >
+                          *
+                        </span> */}
+                        {t("Available_ammount")} €{credit?.credit}
+                      </>
+                    }
+
+                  </p>
+
+                </> : <>
+                  <div>
+                    <p>“Gentile Cliente, la sua richiesta è stata presa in carico.
+                      La ringraziamo,
+                      Il Team di Dealence”</p>
+                  </div>
+                </>
+              }
+
+
+
+
             </Container>
+
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={submitChange}
-            color="primary"
-            disabled={
-              !amount ||
-              !accept ||
-              credit < 500 ||
-              amount < 500 ||
-              amount % 500 !== 0
+        {
+          !depositRequestSuccess && <DialogActions>
+            {
+
+              depositLoading ? <Skeleton /> : <Button
+                onClick={handeslDepost}
+                color="primary"
+                disabled={depositLoading || !depositAmmount || depositAmmount> credit?.credit}
+              >
+                {t('Deposit_Now')}
+              </Button>
+
             }
-          >
-            {t("Confirm")}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
-      {/* Increment Dialog*/}
-      <Dialog
-        // style={{
-        //   minHeight:''
-        // }}
-        className={classes.dbs}
-        open={openSelect}
-        onClose={selectClose}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle id="scroll-dialog-title">
-          {t("Chooser_your_plan")}
-          <ClearIcon
-            onClick={selectClose}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: "40px",
-              /* height: 18px; */
-              position: "absolute",
-              top: "17px",
-              right: "10px",
-              height: "27px",
-              color: "#0041C1",
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main">
-              <div style={{ marginTop: "31px", marginBottom: "31px" }}>
-                <div
-                  style={{
-                    borderRadius: "7px",
-                    padding: "10px 15px",
-                    boxShadow: "0px 0px 13px 0px rgb(82 63 105 / 15%)",
-                  }}
-                >
-                  <div
-                    // className="iconData"
-                    style={{
-                      display: "inline-block",
-                      verticalAlign: "text-bottom",
-                      marginTop: "18px",
-                    }}
-                  >
-                    {/* <CalendarTodayIcon /> */}
-                    <div
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.05)",
-                        padding: "12px 8px",
-                        borderRadius: "50px",
-                        color: "rgb(0, 65, 193)",
-                      }}
-                    >
-                      <span>7.2%</span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "inline-block",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "500",
-                        "font-size": "17px",
-                      }}
-                      className="plnTitle"
-                    >
-                      {t("Bimonthly")}
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: "10px",
-                      }}
-                      className="plnText"
-                    >
-                      {t("Receive_the")}
-                    </div>
-                  </div>
-                  <div className="selectbtnMy">
-                    <Button
-                      onClick={() => {
-                        setPlan("BIMONTHLY");
-                        setplanSelected("BIMONTHLY");
-                      }}
-                      className="sle"
-                      style={{
-                        marginBottom: "4px",
-                        marginTop: "15px",
-                        backgroundColor: `${planSelected === "BIMONTHLY" ? " #1274E7" : ""
-                          }`,
-                        color: `${planSelected === "BIMONTHLY" ? " #fff" : "#1274E7"
-                          }`,
-                        border: "1px solid rgba(0, 65, 193, 0.5)",
-                      }}
-                      variant="outlined"
-                    >
-                      {t("Select")}
-                    </Button>
-                  </div>
-                </div>
+          </DialogActions>
+        }
 
-                <div
-                  style={{
-                    borderRadius: "7px",
-                    padding: "10px 15px",
-                    boxShadow: "0px 0px 13px 0px rgb(82 63 105 / 15%)",
-                    marginTop: "21px",
-                  }}
-                >
-                  <div
-                    // className="iconData"
-                    style={{
-                      display: "inline-block",
-                      verticalAlign: "text-bottom",
-                      marginTop: "18px",
-                    }}
-                  >
-                    {/* <CalendarTodayIcon /> */}
-                    <div
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.05)",
-                        padding: "12px 8px",
-                        borderRadius: "50px",
-                        color: "rgb(0, 65, 193)",
-                      }}
-                    >
-                      <span>30%</span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "inline-block",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "500",
-                        "font-size": "17px",
-                      }}
-                      className="plnTitle"
-                    >
-                      {t("Semiannual")}
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: "10px",
-                      }}
-                      className="plnText"
-                    >
-                      {t("Receive_the_every")}
-                    </div>
-                  </div>
-                  <div className="selectbtnMy">
-                    <Button
-                      className="sle"
-                      onClick={() => {
-                        setPlan("SEMIANNUAL");
-                        setplanSelected("SEMIANNUAL");
-                      }}
-                      style={{
-                        marginBottom: "4px",
-                        marginTop: "15px",
-                        backgroundColor: `${planSelected === "SEMIANNUAL" ? " #1274E7" : ""
-                          }`,
-                        color: `${planSelected === "SEMIANNUAL" ? " #fff" : "#1274E7"
-                          }`,
-                        border: "1px solid rgba(0, 65, 193, 0.5)",
-                      }}
-                      variant="outlined"
-                    >
-                      {t("Select")}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setopenSelect(false);
-              setOpenChange(true);
-            }}
-            disabled={!plan ? true : false}
-            color="primary"
-          >
-            {t("Confirm")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Increment Dialog 2*/}
-      <Dialog
-        // style={{
-        //   minHeight:''
-        // }}
-        className={classes.dbs}
-        open={openSelect2}
-        onClose={selectClose2}
-        scroll="paper"
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-      >
-        <DialogTitle id="scroll-dialog-title">
-          {t("Chooser_your_plan")}
-          <ClearIcon
-            onClick={selectClose2}
-            className="closeIcon"
-            style={{
-              /* float: right; */ width: "40px",
-              /* height: 18px; */
-              position: "absolute",
-              top: "17px",
-              right: "10px",
-              height: "27px",
-              color: "#0041C1",
-            }}
-          />
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            <Container component="main">
-              <div style={{ marginTop: "31px", marginBottom: "31px" }}>
-                <div
-                  style={{
-                    borderRadius: "7px",
-                    padding: "10px 15px",
-                    boxShadow: "0px 0px 13px 0px rgb(82 63 105 / 15%)",
-                  }}
-                >
-                  <div
-                    // className="iconData"
-                    style={{
-                      display: "inline-block",
-                      verticalAlign: "text-bottom",
-                      marginTop: "18px",
-                    }}
-                  >
-                    {/* <CalendarTodayIcon /> */}
-                    <div
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.05)",
-                        padding: "12px 8px",
-                        borderRadius: "50px",
-                        color: "rgb(0, 65, 193)",
-                      }}
-                    >
-                      <span>7.2%</span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "inline-block",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "500",
-                        "font-size": "17px",
-                      }}
-                      className="plnTitle"
-                    >
-                      {t("Bimonthly")}
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: "10px",
-                      }}
-                      className="plnText"
-                    >
-                      {t("Receive_the")}
-                    </div>
-                  </div>
-                  <div className="selectbtnMy">
-                    <Button
-                      onClick={() => {
-                        setPlan("BIMONTHLY");
-                        setplanSelected("BIMONTHLY");
-                      }}
-                      className="sle"
-                      style={{
-                        marginBottom: "4px",
-                        marginTop: "15px",
-                        backgroundColor: `${planSelected === "BIMONTHLY" ? " #1274E7" : ""
-                          }`,
-                        color: `${planSelected === "BIMONTHLY" ? " #fff" : "#1274E7"
-                          }`,
-                        border: "1px solid rgba(0, 65, 193, 0.5)",
-                      }}
-                      variant="outlined"
-                    >
-                      {t("Select")}
-                    </Button>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    borderRadius: "7px",
-                    padding: "10px 15px",
-                    boxShadow: "0px 0px 13px 0px rgb(82 63 105 / 15%)",
-                    marginTop: "21px",
-                  }}
-                >
-                  <div
-                    // className="iconData"
-                    style={{
-                      display: "inline-block",
-                      verticalAlign: "text-bottom",
-                      marginTop: "18px",
-                    }}
-                  >
-                    {/* <CalendarTodayIcon /> */}
-                    <div
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.05)",
-                        padding: "12px 8px",
-                        borderRadius: "50px",
-                        color: "rgb(0, 65, 193)",
-                      }}
-                    >
-                      <span>30%</span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "inline-block",
-                      marginLeft: "8px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "500",
-                        "font-size": "17px",
-                      }}
-                      className="plnTitle"
-                    >
-                      {t("Semiannual")}
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: "10px",
-                      }}
-                      className="plnText"
-                    >
-                      {t("Receive_the_every")}
-                    </div>
-                  </div>
-                  <div className="selectbtnMy">
-                    <Button
-                      className="sle"
-                      onClick={() => {
-                        setPlan("SEMIANNUAL");
-                        setplanSelected("SEMIANNUAL");
-                      }}
-                      style={{
-                        marginBottom: "4px",
-                        marginTop: "15px",
-                        backgroundColor: `${planSelected === "SEMIANNUAL" ? " #1274E7" : ""
-                          }`,
-                        color: `${planSelected === "SEMIANNUAL" ? " #fff" : "#1274E7"
-                          }`,
-                        border: "1px solid rgba(0, 65, 193, 0.5)",
-                      }}
-                      variant="outlined"
-                    >
-                      {t("Select")}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setopenSelect2(false);
-              setOpen(true);
-            }}
-            disabled={!plan ? true : false}
-            color="primary"
-          >
-            {t("Confirm")}
-          </Button>
-        </DialogActions>
       </Dialog>
     </>
   );
