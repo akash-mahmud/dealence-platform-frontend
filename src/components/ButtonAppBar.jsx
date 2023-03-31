@@ -678,63 +678,78 @@ const [depositLoading, setdepositLoading] = useState(false)
 
   const cryptoDataSendToServer = async (e) => {
     setwithdrawLoading(true);
-    e.preventDefault();
-    const { data } = await axiosRequest.post(
-      endpoint.transaction.cryptoWithdraw,
-      { withdrawAmount, cryptoAddress, crypto, withdrawName, withdrawEmail },
+    try {
 
-    );
-    if (data === 'success') {
-      setcryptoWithdrawModelSuccesfulText(true);
-      setwithDrawByCryptoDialogue(false);
-      setwithdrawLoading(false);
-      setsuccessWindow(true);
-      const getData = async () => {
-        const res = await axiosRequest.get(
-          endpoint.account.getbalance
-        );
+      e.preventDefault();
+      const { data } = await axiosRequest.post(
+        endpoint.transaction.cryptoWithdraw,
+        { withdrawAmount, cryptoAddress, crypto, withdrawName, withdrawEmail },
 
-        setBalance(() => res.data.balance);
-      };
+      );
+      if (data === 'success') {
+        setcryptoWithdrawModelSuccesfulText(true);
+        setwithDrawByCryptoDialogue(false);
 
-      getData();
+        setsuccessWindow(true);
+        const getData = async () => {
+          const res = await axiosRequest.get(
+            endpoint.account.getbalance
+          );
+
+          setBalance(() => res.data.balance);
+        };
+
+        getData();
+      }
+    } catch (error) {
+
     }
+
+    setwithdrawLoading(false);
   };
   const [depositRequestSuccess, setDepositRequestSuccess] = useState(false)
   const ibanWithdrawSuccess = () => { };
   const ibanDataSendToServer = async (e) => {
     setwithdrawLoading(true);
-    e.preventDefault();
-    const { data } = await axiosRequest.post(
-      endpoint.transaction.withdraw,
-      {
-        withdrawAmount,
-        withdrawNameFull,
-        bankName,
-        swift,
-        withdrawEmail,
-        iban,
-      },
 
-    );
+    try {
+      e.preventDefault();
+      const { data } = await axiosRequest.post(
+        endpoint.transaction.withdraw,
+        {
+          withdrawAmount,
+          withdrawNameFull,
+          bankName,
+          swift,
+          withdrawEmail,
+          iban,
+        },
 
-    if (data === 'success') {
-      setwithdrawByIbanDialogue(false);
-      setwithdrawLoading(false);
-      setsuccessWindow(true);
-      // NotificationManager.success(data);
+      );
 
-      const getData = async () => {
-        const res = await axiosRequest.get(
-          endpoint.account.getbalance,
+      if (data === 'success') {
+        setwithdrawByIbanDialogue(false);
 
-        );
+        setsuccessWindow(true);
+        // NotificationManager.success(data);
 
-        setBalance(() => res.data.balance);
-      };
+        const getData = async () => {
+          const res = await axiosRequest.get(
+            endpoint.account.getbalance,
 
-      getData();
+          );
+
+          setBalance(() => res.data.balance);
+        };
+
+        getData();
+      }
+    } catch (error) {
+      
     }
+    
+
+    setwithdrawLoading(false);
   };
 
   const handeslDepost = async () => {

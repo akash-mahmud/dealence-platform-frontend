@@ -2,6 +2,7 @@ import React from 'react'
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { useTranslation } from "react-i18next";
 import ClearIcon from "@material-ui/icons/Clear";
+import {Spin} from 'antd'
 import clsx from "clsx";
 import {
   Button,
@@ -41,6 +42,8 @@ export default function Iban({
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
+        <Spin spinning={withdrawLoading}>
+
         <DialogTitle
           style={{
             margin: "12px",
@@ -182,6 +185,8 @@ export default function Iban({
             Close
           </Button> */}
         </DialogActions>
+        </Spin>
+
       </Dialog>
     </>
   );

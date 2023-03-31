@@ -199,7 +199,7 @@ export default function AppDrawer({
 
             <ListItem
               button
-              onClick={() => history.push("/activities")}
+              // onClick={() => history.push("/activities")}
               className={clsx(classes.drawerListItem)}
             >
               <ListItemIcon
@@ -211,7 +211,17 @@ export default function AppDrawer({
               >
                 <PieChart />
               </ListItemIcon>
-              <ListItemText primary={t("Investments")} />
+              <ListItemText primary={t("Investments")} secondary={
+                <>
+                  <p
+                    style={{
+                      color: "#0041C1",
+                    }}
+                  >
+                    {t("Coming_Soon")}
+                  </p>
+                </>
+              } />
             </ListItem>
 
             <ListItem
@@ -232,16 +242,26 @@ export default function AppDrawer({
             </ListItem>
 
             <ListItem
-              onClick={() =>
-                window.open("https://www.dealence.com/blog", "_blank")
-              }
+              // onClick={() =>
+              //   window.open("https://www.dealence.com/blog", "_blank")
+              // }
               button
               className={clsx(classes.drawerListItem)}
             >
               <ListItemIcon className={clsx(classes.drawerListItemIcon)}>
                 <RssFeed />
               </ListItemIcon>
-              <ListItemText primary="Blog" />
+              <ListItemText primary="Blog" secondary={
+                <>
+                  <p
+                    style={{
+                      color: "#0041C1",
+                    }}
+                  >
+                    {t("Coming_Soon")}
+                  </p>
+                </>
+              } />
             </ListItem>
             <ListItem
               button
