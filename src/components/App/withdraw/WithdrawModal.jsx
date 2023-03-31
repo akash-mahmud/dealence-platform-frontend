@@ -89,13 +89,8 @@ export default function WithdrawModal({
                     name="ammount"
                     value={withdrawAmount}
                     onChange={(e) => {
-                      if (e.target.value) {
-                        if (parseFloat(e.target.value) < credit) {
-                          setwithdrawAmount(e.target.value)
-                        }
-                      } else {
-                        setwithdrawAmount(undefined)
-                      }
+                      setwithdrawAmount(e.target.value)
+                   
                     
                      
                     }}
@@ -148,13 +143,7 @@ export default function WithdrawModal({
         </DialogContent>
         <DialogActions>
           <Button
-            disabled={
-              !withdrawEmail ||
-              !withdrawAmount
-           
-        
-          
-            }
+
             onClick={withdrawWithMethod}
             color="primary"
           >

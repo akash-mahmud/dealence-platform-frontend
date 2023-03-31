@@ -146,6 +146,8 @@ export default function SignUp() {
         toast.success(data)
         auth.signin(email, password, () => history.replace('/'));
 
+      } else if (data==='exist') {
+        toast.error('questo indirizzo email è già in uso.')
       } else {
         toast.error(data)
       }
