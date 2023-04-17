@@ -61,7 +61,7 @@ test();
                   <TableCell>{t('Plan')}</TableCell>
                   <TableCell align="right">{t('Balance')}</TableCell>
                   <TableCell align="right">{t('Interest')}</TableCell>
-                  <TableCell align="right">{t('Next_payout')}</TableCell>
+                 
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -73,7 +73,7 @@ test();
                           color: 'rgba(0, 0, 0, 0.54)',
                         }}
                       >
-                        {row.createdAt}
+                        {row?.startDate}
                       </TableCell>
                       <TableCell
                         style={{
@@ -99,14 +99,7 @@ test();
                       >
                         &euro;{row.interest}
                       </TableCell>
-                      <TableCell
-                        style={{
-                          color: 'rgba(0, 0, 0, 0.54)',
-                        }}
-                        align="right"
-                      >
-                        {row.daysUntilPayout} {t('Days')}
-                      </TableCell>
+                   
                     </TableRow>
                   ))}
               </TableBody>
