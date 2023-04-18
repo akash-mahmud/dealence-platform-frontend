@@ -60,7 +60,7 @@ test();
                   <TableCell>{t('Date')}</TableCell>
                   <TableCell>{t('Plan')}</TableCell>
                   <TableCell align="right">{t('Balance')}</TableCell>
-                  <TableCell align="right">{t('Interest')}</TableCell>
+                
                  
                 </TableRow>
               </TableHead>
@@ -91,14 +91,7 @@ test();
                       >
                         &euro;{row.principal}
                       </TableCell>
-                      <TableCell
-                        style={{
-                          color: 'rgba(0, 0, 0, 0.54)',
-                        }}
-                        align="right"
-                      >
-                        &euro;{row.interest}
-                      </TableCell>
+                     
                    
                     </TableRow>
                   ))}
