@@ -45,7 +45,7 @@ function useProvideAuth() {
         getUser()
     }, [])
 
-  const signin = async (username, password, cb) => {
+  const signin = async (username, password, cb, restrictionCb) => {
       try {
         return await axiosRequest.post(endpoint.user.login,
 
@@ -67,7 +67,12 @@ function useProvideAuth() {
           }
         });
       } catch (error) {
-        toast.error(error.response.data.message);
+        if (error.response.data.message ==='restricted') {
+          restrictionCb()
+        }else{
+
+          toast.error(error.response.data.message);
+        }
       }
 
     };

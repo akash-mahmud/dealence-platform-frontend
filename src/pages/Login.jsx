@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { useTranslation } from 'react-i18next';
-
+import {Modal} from 'antd'
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -105,6 +105,19 @@ export default function SignIn() {
   const classes = useStyles();
   const { t } = useTranslation();
   const auth = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const history = useHistory();
   const location = useLocation();
@@ -156,6 +169,17 @@ export default function SignIn() {
 
   return (
     <main className={classes.content}>
+            <Modal  open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <p>Gentile Titolare dell'Account Dealence, <br />
+Il suo account &egrave; stato limitato, poich&eacute; &egrave; scaduto il termine di 7 giorni per indicare l'entit&agrave; del Deposito che avrebbe intenzione di effettuare. <br />
+Per sbloccare il profilo, completare l'iter di iscrizione ed iniziare ad usufruire dei nostri servizi, ci contatti ai seguenti indirizzi:<br />
+Tel. Mobile +41 0798421775 (Svizzera) +39 3716917543 (Italia)<br />
+E-mail support@dealence.com</p>
+
+<p>Cordiali saluti,<br />
+Il Team di Dealence</p>
+      </Modal>
+
       <Container
         maxWidth="lg"
         style={{
@@ -308,7 +332,7 @@ export default function SignIn() {
                     color="primary"
                     onClick={() =>
                       auth.signin(username, password, () =>
-                        history?.replace(from)
+                        {history?.replace(from)}, showModal
                       )
                     }
 
