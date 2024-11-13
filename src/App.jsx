@@ -1,28 +1,33 @@
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Contract from "./pages/Contract";
-import ButtonAppBar from './components/ButtonAppBar';
-import PrivateRoute from './PrivateRoute';
-import { ProvideAuth, useAuth } from './hooks/use-auth';
+import ButtonAppBar from "./components/ButtonAppBar";
+import PrivateRoute from "./PrivateRoute";
+import { ProvideAuth, useAuth } from "./hooks/use-auth";
 
+import "./App.css";
+import {
+  createTheme,
+  CssBaseline,
+  makeStyles,
+  ThemeProvider,
+} from "@material-ui/core";
+import Settings from "./pages/Settings";
+import ReferFriend from "./pages/ReferFriend";
+import Verification from "./pages/Verification";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Investments from "./pages/Investments";
 
-import './App.css'
-import { createTheme, CssBaseline, makeStyles, ThemeProvider } from '@material-ui/core';
-import Settings from './pages/Settings';
-import ReferFriend from './pages/ReferFriend';
-import Verification from './pages/Verification';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Investments from './pages/Investments';
-
-import { useEffect, useState } from 'react';
-import { api } from './config/api';
-import { axiosRequest } from './http/axiosRequest';
-import { endpoint } from './config/endpoints';
-import { useDispatch, useSelector } from 'react-redux';
-
+import { useEffect, useState } from "react";
+import { api } from "./config/api";
+import { axiosRequest } from "./http/axiosRequest";
+import { endpoint } from "./config/endpoints";
+import { useDispatch, useSelector } from "react-redux";
+import BuisnessActivity from "./pages/buisnessActivity";
+import BuisnessSectionDetails from "./pages/BuisnessSectionDetails";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -33,43 +38,34 @@ const useStyles = makeStyles(() => ({
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#0041C1',
-      dark: '#072968',
+      main: "#0041C1",
+      dark: "#072968",
     },
   },
   typography: {
-    fontFamily: [
-      'Poppins',
-      'sans-serif'
-    ].join(',')
-  }
+    fontFamily: ["Poppins", "sans-serif"].join(","),
+  },
 });
 
 function App() {
+  const auth = useAuth();
 
-  const auth = useAuth()
-
-  
   const classes = useStyles();
 
   const [balance, setBalance] = useState(0);
   const [credit, setcredit] = useState(0);
   const [interest, setInterest] = useState(0.0);
   const [payouts, setPayouts] = useState({
-    day: '',
-    month: '',
-    week: '',
-    year: '',
+    day: "",
+    month: "",
+    week: "",
+    year: "",
   });
 
   const getPayouts = async () => {
-
-    const res = await axiosRequest.get(
-      endpoint.account.getbalance,
-      {
-        withCredentials: true,
-      }
-    );
+    const res = await axiosRequest.get(endpoint.account.getbalance, {
+      withCredentials: true,
+    });
 
     // setBalance(res.data.balance);
     // setcredit(res.data.credit);
@@ -77,16 +73,16 @@ function App() {
     // setInterest(res.data.interestEarned);
   };
 
-  const { contract } = useSelector((state) => state.global)
+  const { contract } = useSelector((state) => state.global);
 
   useEffect(() => {
     const getData = async () => {
       const { data } = await axiosRequest.post(
-        endpoint.contract.loadAvailableCredit, { contract: contract ? contract : auth?.user?.contracts?.split(',')[0] }
+        endpoint.contract.loadAvailableCredit,
+        { contract: contract ? contract : auth?.user?.contracts?.split(",")[0] }
       );
 
       setcredit(data);
-
     };
     getData();
   }, [contract]);
@@ -97,7 +93,6 @@ function App() {
           <div className={classes.root}>
             <CssBaseline />
             <ButtonAppBar
-       
               contract={contract}
               getPayouts={getPayouts}
               setBalance={setBalance}
@@ -131,6 +126,12 @@ function App() {
               <PrivateRoute path="/activities">
                 <Investments />
               </PrivateRoute>
+              <PrivateRoute path="/buisness-section/:id">
+                <BuisnessSectionDetails />
+              </PrivateRoute>
+              <PrivateRoute path="/buisness-section">
+                <BuisnessActivity />
+              </PrivateRoute>
 
               <PrivateRoute path="/account">
                 <Settings />
@@ -156,7 +157,6 @@ function App() {
             </Switch>
           </div>
         </Router>
-
       </ProvideAuth>
     </ThemeProvider>
   );

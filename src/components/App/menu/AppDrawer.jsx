@@ -1,16 +1,15 @@
-import React from 'react'
-import clsx from 'clsx'
+import React from "react";
+import clsx from "clsx";
 import { useAuth } from "../../../hooks/use-auth";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-
   IconButton,
-
   List,
   ListItem,
   ListItemText,
-  ListItemIcon, Drawer
+  ListItemIcon,
+  Drawer,
 } from "@material-ui/core";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Person from "@material-ui/icons/Person";
@@ -21,6 +20,7 @@ import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined";
 import Settings from "@material-ui/icons/Settings";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import PieChart from "@material-ui/icons/PieChart";
+import WorkIcon from "@material-ui/icons/Work";
 import RssFeed from "@material-ui/icons/RssFeed";
 import LiveHelp from "@material-ui/icons/LiveHelp";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
@@ -211,19 +211,38 @@ export default function AppDrawer({
               >
                 <PieChart />
               </ListItemIcon>
-              <ListItemText primary={t("Investments")} secondary={
-                <>
-                  <p
-                    style={{
-                      color: "#0041C1",
-                    }}
-                  >
-                    {t("Coming_Soon")}
-                  </p>
-                </>
-              } />
+              <ListItemText
+                primary={t("Investments")}
+                secondary={
+                  <>
+                    <p
+                      style={{
+                        color: "#0041C1",
+                      }}
+                    >
+                      {t("Coming_Soon")}
+                    </p>
+                  </>
+                }
+              />
             </ListItem>
-
+            <ListItem
+              onClick={() => history.push("/buisness-section")}
+              button
+              // onClick={() => history.push("/activities")}
+              className={clsx(classes.drawerListItem)}
+            >
+              <ListItemIcon
+                className={clsx(
+                  classes.drawerListItemIcon,
+                  currentRouteName == "Buisness section" &&
+                    classes.drawerListItemIconActive
+                )}
+              >
+                <WorkIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Buisness Section"} />
+            </ListItem>
             <ListItem
               button
               onClick={() => history.push("/account")}
@@ -251,17 +270,20 @@ export default function AppDrawer({
               <ListItemIcon className={clsx(classes.drawerListItemIcon)}>
                 <RssFeed />
               </ListItemIcon>
-              <ListItemText primary="Blog" secondary={
-                <>
-                  <p
-                    style={{
-                      color: "#0041C1",
-                    }}
-                  >
-                    {t("Coming_Soon")}
-                  </p>
-                </>
-              } />
+              <ListItemText
+                primary="Blog"
+                secondary={
+                  <>
+                    <p
+                      style={{
+                        color: "#0041C1",
+                      }}
+                    >
+                      {t("Coming_Soon")}
+                    </p>
+                  </>
+                }
+              />
             </ListItem>
             <ListItem
               button
